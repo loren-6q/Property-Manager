@@ -861,18 +861,18 @@ function App() {
                     {expandedProperties.has(property.id) && (
                       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         {units.filter(u => u.propertyId === property.id).map(unit => {
-                          const allBookingsForUnit = bookings.filter(b => b.unitId === unit.id).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+                          // Only show current and future bookings in Units tab
+                          const currentAndFutureBookings = bookings.filter(b => b.unitId === unit.id && isAfter(parseISO(b.checkout), today)).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
                           const status = getUnitStatus(unit.id);
-                          const currentBooking = allBookingsForUnit.find(b => b.status === 'checkedIn');
+                          const currentBooking = currentAndFutureBookings.find(b => b.status === 'checkedIn');
                           let statusColorClass = STATUS_COLORS[status];
                           if(currentBooking && (getDueNow(currentBooking) - getAmountPaid(currentBooking.payments)) > 2) {
                               statusColorClass = STATUS_COLORS['occupiedOwes']
                           } else if (currentBooking) {
                               statusColorClass = STATUS_COLORS['occupiedPaid']
                           }
-                          const allBookings = allBookingsForUnit;
                           const bookingElements = [];
-                          const sortedBookings = allBookings.sort((a, b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+                          const sortedBookings = currentAndFutureBookings.sort((a, b) => parseISO(a.checkIn) - parseISO(b.checkIn));
                           
                           if (sortedBookings.length > 0) {
                             const firstCheckIn = parseISO(sortedBookings[0].checkIn);
