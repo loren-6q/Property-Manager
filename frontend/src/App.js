@@ -865,9 +865,19 @@ function App() {
                           // Only show current and future bookings in Units tab
                           const currentAndFutureBookings = bookings.filter(b => b.unitId === unit.id && isAfter(parseISO(b.checkout), today)).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
                           const status = getUnitStatus(unit.id);
-                          const currentBooking = currentAndFutureBookings.find(b => b.status === 'checkedIn');
+                          const currentBooking = currentAndFutureBookings.find(b => isBefore(parseISO(b.checkIn), addDays(today, 1)) && isAfter(parseISO(b.checkout), today));
                           let statusColorClass = STATUS_COLORS[status];
-                          if(currentBooking && (getDueNow(currentBooking) - getAmountPaid(currentBooking.payments)) > 2) {
+                          
+                          // Check if there's a booking that should be checked in but isn't
+                          const shouldBeCheckedIn = currentAndFutureBookings.find(b => 
+                            isBefore(parseISO(b.checkIn), addDays(today, 1)) && 
+                            isAfter(parseISO(b.checkout), today) && 
+                            b.status !== 'checkedIn'
+                          );
+                          
+                          if (shouldBeCheckedIn) {
+                            statusColorClass = 'bg-red-200 border-red-700'; // RED for should be checked in but isn't
+                          } else if(currentBooking && (getDueNow(currentBooking) - getAmountPaid(currentBooking.payments)) > 2) {
                               statusColorClass = STATUS_COLORS['occupiedOwes']
                           } else if (currentBooking) {
                               statusColorClass = STATUS_COLORS['occupiedPaid']
