@@ -1,52 +1,1314 @@
-import { useEffect } from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { format, differenceInDays, parseISO, addMonths, addWeeks, subDays, isBefore, isAfter, isSameDay, addDays, differenceInMonths, addYears, eachDayOfInterval } from "date-fns";
 import axios from "axios";
+import "./App.css";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const Home = () => {
-  const helloWorldApi = async () => {
+// Utility Functions and Data
+const STATUS_COLORS = {
+  future: "bg-yellow-100 border-yellow-500",
+  paid: "bg-green-100 border-green-500",
+  owed: "bg-red-100 border-red-500",
+  vacant: "bg-yellow-100 border-yellow-500",
+  occupiedPaid: "bg-green-100 border-green-700",
+  occupiedOwes: "bg-red-100 border-red-700",
+  checkedOutPaid: "bg-gray-200 border-gray-500",
+  checkedOutOwes: "bg-orange-200 border-orange-500",
+  canceled: "bg-gray-400 border-gray-700",
+};
+
+const getMeterCost = (meterReadings, rate = 8) => {
+  if (!meterReadings || meterReadings.length < 2) return 0;
+  const firstReading = meterReadings[0].reading;
+  const lastReading = meterReadings[meterReadings.length - 1].reading;
+  const kwhUsed = lastReading - firstReading;
+  return Math.max(0, kwhUsed * rate);
+};
+
+const getRentCost = (booking) => {
+  if (booking.totalPrice && booking.totalPrice > 0) {
+    // If totalPrice is available, use it as the total rent
+    return booking.totalPrice - (booking.commission || 0);
+  }
+  // Otherwise, calculate from line items
+  return booking.lineItems ? booking.lineItems.reduce((sum, item) => sum + item.cost, 0) : 0;
+};
+
+const getWaterCost = (booking) => {
+  if (!booking.checkIn || !booking.checkout) return 0;
+  const checkInDate = parseISO(booking.checkIn);
+  const checkoutDate = parseISO(booking.checkout);
+  const numMonths = differenceInMonths(checkoutDate, checkInDate);
+  let waterCost = numMonths * booking.monthlyWaterCharge;
+  const remainingDays = differenceInDays(checkoutDate, addMonths(checkInDate, numMonths));
+  if (remainingDays >= 28) {
+    waterCost += booking.monthlyWaterCharge;
+  }
+  return waterCost;
+};
+
+const getTotalCost = (booking) => {
+  const totalRent = getRentCost(booking);
+  const totalElectric = getMeterCost(booking.meterReadings, booking.electricRate);
+  const totalWater = getWaterCost(booking);
+  return (booking.deposit || 0) + totalRent + totalElectric + totalWater;
+};
+
+const getAmountPaid = (payments) => payments.reduce((sum, p) => sum + p.amount, 0);
+
+const getAmountDue = (booking) => {
+  const totalCost = getTotalCost(booking);
+  const amountPaid = getAmountPaid(booking.payments);
+  return totalCost - amountPaid;
+};
+
+const getDueNowRent = (booking) => {
+  const today = new Date();
+  const checkInDate = parseISO(booking.checkIn);
+
+  if (isAfter(checkInDate, today)) {
+    return 0;
+  }
+
+  if (booking.totalPrice && booking.totalPrice > 0) {
+    return booking.totalPrice - (booking.commission || 0);
+  }
+    
+  return booking.lineItems
+    .filter(item => isBefore(parseISO(item.startDate), today) || isSameDay(parseISO(item.startDate), today))
+    .reduce((sum, item) => sum + item.cost, 0);
+};
+
+const getDueNow = (booking) => {
+  const today = new Date();
+  const checkInDate = parseISO(booking.checkIn);
+
+  if (isAfter(checkInDate, today)) {
+    return 0;
+  }
+  const rentDueNow = getDueNowRent(booking);
+  let waterDueNow = 0;
+  const numMonthsPassed = differenceInMonths(today, checkInDate);
+  waterDueNow = numMonthsPassed * (booking.monthlyWaterCharge || 0);
+  const electricDueNow = getMeterCost(booking.meterReadings, booking.electricRate);
+
+  const totalDue = (booking.deposit || 0) + rentDueNow + electricDueNow + waterDueNow;
+
+  return totalDue;
+};
+
+const getNextPaymentDueDate = (booking) => {
+  const checkInDate = parseISO(booking.checkIn);
+  const today = new Date();
+  let nextDate = checkInDate;
+  while (isBefore(nextDate, today) || isSameDay(nextDate, today)) {
+    if (booking.rentType === 'day') {
+      nextDate = addDays(nextDate, 1);
+    } else if (booking.rentType === 'week') {
+      nextDate = addWeeks(nextDate, 1);
+    } else if (booking.rentType === 'month') {
+      nextDate = addMonths(nextDate, 1);
+    } else {
+      break;
+    }
+  }
+  return format(nextDate, 'MMM d, yyyy');
+};
+
+const getNextCheckInDate = (unitId, bookings) => {
+  const today = new Date();
+  const futureBookings = bookings
+    .filter(b => b.unitId === unitId && isAfter(parseISO(b.checkIn), today))
+    .sort((a, b) => differenceInDays(parseISO(a.checkIn), parseISO(b.checkIn)));
+  return futureBookings.length > 0 ? {
+    name: futureBookings[0].name,
+    checkIn: format(parseISO(futureBookings[0].checkIn), 'MMM d, yyyy'),
+    id: futureBookings[0].id
+  } : null;
+};
+
+const getDisplayRate = (booking) => {
+  const numDays = differenceInDays(parseISO(booking.checkout), parseISO(booking.checkIn));
+  if (numDays < 7) {
+    return `${booking.dailyRate}฿/day`;
+  } else if (numDays < 21) {
+    return `${booking.weeklyRate}฿/wk`;
+  } else {
+    return `${booking.monthlyRate}฿/mo`;
+  }
+};
+
+const calculateLineItems = (startDateStr, endDateStr, dailyRate, weeklyRate, monthlyRate) => {
+  let lineItems = [];
+  if (!startDateStr || !endDateStr) return lineItems;
+  let current = parseISO(startDateStr);
+  const end = parseISO(endDateStr);
+
+  if (!isAfter(end, current)) {
+    return lineItems;
+  }
+
+  while (isBefore(current, end)) {
+    let itemStartDate = current;
+    let itemEndDate;
+    let cost;
+    let type;
+    let nextDate;
+
+    const endOfMonth = subDays(addMonths(itemStartDate, 1), 1);
+    if (isAfter(endOfMonth, end) || isSameDay(endOfMonth, end)) {
+      const remainingDays = differenceInDays(end, itemStartDate);
+      const numWeeks = Math.floor(remainingDays / 7);
+      const remDays = remainingDays % 7;
+
+      if (numWeeks > 0) {
+        itemEndDate = subDays(addWeeks(itemStartDate, numWeeks), 1);
+        cost = numWeeks * weeklyRate;
+        type = "week";
+        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: weeklyRate });
+        current = addWeeks(itemStartDate, numWeeks);
+      }
+      if (remDays > 0) {
+        itemStartDate = current;
+        itemEndDate = end;
+        cost = remDays * dailyRate;
+        type = "day";
+        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: dailyRate });
+        current = end;
+      }
+      break;
+    } else {
+      itemEndDate = endOfMonth;
+      cost = monthlyRate;
+      type = "month";
+      nextDate = addDays(endOfMonth, 1);
+      lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: monthlyRate });
+      current = nextDate;
+    }
+  }
+  return lineItems;
+};
+
+function App() {
+  const today = new Date();
+  const [activeTab, setActiveTab] = useState("units");
+  const [properties, setProperties] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [modalData, setModalData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  const [editingUnit, setEditingUnit] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [meterRate, setMeterRate] = useState(8);
+  const [accountingFilters, setAccountingFilters] = useState({ unitId: 'all', guestName: '', checkInMonth: 'all', checkoutMonth: 'all', owedStatus: 'all' });
+  const [isFontSizeIncreased, setIsFontSizeIncreased] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [expandedRow, setExpandedRow] = useState(null);
+  const [reminders, setReminders] = useState([]);
+  const [newReminderData, setNewReminderData] = useState({ date: format(today, 'yyyy-MM-dd'), unitId: '', note: '', type: 'Custom' });
+  const [isRemindersModalOpen, setIsRemindersModalOpen] = useState(false);
+  const [expandedProperties, setExpandedProperties] = useState(new Set());
+  const [isRentBreakdownExpanded, setIsRentBreakdownExpanded] = useState(false);
+  const [isElectricBreakdownExpanded, setIsElectricBreakdownExpanded] = useState(false);
+  const [isWaterBreakdownExpanded, setIsWaterBreakdownExpanded] = useState(false);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [newExpense, setNewExpense] = useState({ date: format(today, 'yyyy-MM-dd'), amount: 0, description: '', category: 'Repairs', propertyId: '', unitId: '' });
+  const [accountingPeriod, setAccountingPeriod] = useState({ year: format(today, 'yyyy'), month: 'all' });
+  const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
+  const [newProperty, setNewProperty] = useState({ name: '' });
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const chronologicalMonths = ["all", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  // API Functions
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+      setLoading(true);
+      const [propertiesRes, unitsRes, bookingsRes, expensesRes] = await Promise.all([
+        axios.get(`${API}/properties`),
+        axios.get(`${API}/units`),
+        axios.get(`${API}/bookings`),
+        axios.get(`${API}/expenses`)
+      ]);
+
+      setProperties(propertiesRes.data);
+      setUnits(unitsRes.data);
+      setBookings(bookingsRes.data);
+      setExpenses(expensesRes.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      handleShowAlert("Failed to load data. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const initializeSampleData = async () => {
+    try {
+      await axios.post(`${API}/data/initialize`);
+      await fetchData();
+      handleShowAlert("Sample data initialized!");
+    } catch (error) {
+      console.error("Error initializing data:", error);
+      handleShowAlert("Failed to initialize sample data.");
     }
   };
 
   useEffect(() => {
-    helloWorldApi();
+    const initApp = async () => {
+      try {
+        // Check if API is available
+        await axios.get(`${API}/health`);
+        await fetchData();
+        
+        // If no data exists, initialize sample data
+        if (properties.length === 0) {
+          await initializeSampleData();
+        }
+      } catch (error) {
+        console.error("Error initializing app:", error);
+        handleShowAlert("Failed to connect to server. Please try again.");
+      }
+    };
+    
+    initApp();
   }, []);
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+  // Generate reminders based on bookings
+  useEffect(() => {
+    if (!loading && units.length > 0 && bookings.length > 0) {
+      const today = new Date();
+      const oneMonthFromNow = addMonths(today, 1);
+      
+      const newReminders = [];
+      
+      // Check for vacant units today
+      const vacantUnitsToday = units.filter(unit => {
+        const isOccupiedToday = bookings.some(b => 
+          b.unitId === unit.id && 
+          isBefore(parseISO(b.checkIn), addDays(today, 1)) && 
+          isAfter(parseISO(b.checkout), today)
+        );
+        return !isOccupiedToday;
+      });
 
-function App() {
+      vacantUnitsToday.forEach(unit => {
+        newReminders.push({
+          type: 'vacant',
+          date: today,
+          text: `${unit.name}: VACANT Today`,
+          unitId: unit.id,
+          note: 'This unit is currently vacant.'
+        });
+      });
+
+      // Generate reminders for upcoming events
+      units.forEach(unit => {
+        const bookingsForUnit = bookings.filter(b => b.unitId === unit.id).sort((a, b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+        
+        bookingsForUnit.forEach(b => {
+          const checkInDate = parseISO(b.checkIn);
+          const checkoutDate = parseISO(b.checkout);
+          
+          if (isAfter(checkInDate, today) && isBefore(checkInDate, oneMonthFromNow)) {
+            newReminders.push({
+              type: 'checkin',
+              date: checkInDate,
+              text: `${unit.name}: Check-in ${b.firstName}`,
+              unitId: b.unitId,
+              note: ''
+            });
+          }
+          
+          if (isAfter(checkoutDate, today) && isBefore(checkoutDate, oneMonthFromNow)) {
+            newReminders.push({
+              type: 'checkout',
+              date: checkoutDate,
+              text: `${unit.name}: Checkout ${b.firstName}`,
+              unitId: b.unitId,
+              note: ''
+            });
+          }
+          
+          // Monthly rent reminders
+          let nextRentDate = addMonths(checkInDate, 1);
+          while (isBefore(nextRentDate, checkoutDate)) {
+            if (isAfter(nextRentDate, today) && isBefore(nextRentDate, oneMonthFromNow)) {
+              newReminders.push({
+                type: 'rent',
+                date: nextRentDate,
+                text: `${unit.name}: Rent due ${b.monthlyRate}฿`,
+                unitId: b.unitId,
+                note: ''
+              });
+            }
+            nextRentDate = addMonths(nextRentDate, 1);
+          }
+        });
+      });
+      
+      setReminders(newReminders);
+    }
+  }, [bookings, units, loading]);
+
+  const getDaysDuration = (startDate, endDate) => {
+    if (!startDate || !endDate) return "";
+    const start = parseISO(startDate);
+    const end = parseISO(endDate);
+    if (!start || !end || isAfter(start, end)) return "";
+    const months = differenceInMonths(end, start);
+    const remainingDaysAfterMonths = differenceInDays(end, addMonths(start, months));
+    const weeks = Math.floor(remainingDaysAfterMonths / 7);
+    const days = remainingDaysAfterMonths % 7;
+    return `${months}m ${weeks}w ${days}d`;
+  };
+
+  const saveData = async () => {
+    try {
+      const response = await axios.get(`${API}/data/export`);
+      const data = response.data;
+      
+      const dataStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const link = document.createElement("a");
+      link.setAttribute("href", URL.createObjectURL(blob));
+      link.setAttribute("download", `pms_data_${format(new Date(), 'yyyy-MM-dd')}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      handleShowAlert('All data exported as JSON!');
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      handleShowAlert('Failed to export data.');
+    }
+  };
+
+  const loadData = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        if (importedData && importedData.properties && importedData.units) {
+          await axios.post(`${API}/data/import`, importedData);
+          await fetchData();
+          handleShowAlert('Data loaded successfully!');
+        } else {
+          handleShowAlert('Invalid data format in file.');
+        }
+      } catch (e) {
+        console.error("Error loading data:", e);
+        handleShowAlert('Error loading data. Please ensure the file is a valid JSON export.');
+      }
+    };
+    reader.readAsText(file);
+  };
+    
+  const toggleFontSize = () => {
+    setIsFontSizeIncreased(!isFontSizeIncreased);
+  };
+
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setTimeout(() => {
+      setAlertMessage(null);
+    }, 5000);
+  };
+    
+  const isOverlap = (newBooking, existingBookings) => {
+    const newStart = parseISO(newBooking.checkIn);
+    const newEnd = parseISO(newBooking.checkout);
+    if (!newStart || !newEnd || isAfter(newStart, newEnd)) return true;
+    return existingBookings.some(b => {
+      if (newBooking.id && b.id === newBooking.id) return false;
+      const existingStart = parseISO(b.checkIn);
+      const existingEnd = parseISO(b.checkout);
+      return (newStart < existingEnd) && (newEnd > existingStart);
+    });
+  };
+
+  const getUnitStatus = (unitId) => {
+    const allBookingsForUnit = bookings.filter(b => b.unitId === unitId);
+    const currentBooking = allBookingsForUnit.find(b => isBefore(parseISO(b.checkIn), today) && isAfter(parseISO(b.checkout), today));
+    const nextBooking = getNextCheckInDate(unitId, allBookingsForUnit);
+    if (currentBooking) {
+      const amountDue = getDueNow(currentBooking) - getAmountPaid(currentBooking.payments);
+      return amountDue > 2 ? 'occupiedOwes' : 'occupiedPaid';
+    } else if (nextBooking) {
+      return 'future';
+    } else {
+      return 'vacant';
+    }
+  };
+
+  const handleOpenBookingModal = (booking = null, unitId = null) => {
+    let newBookingData;
+    if (booking) {
+      newBookingData = booking;
+    } else if (unitId) {
+      const unit = units.find(u => u.id === unitId);
+      newBookingData = {
+        id: `book-${Date.now()}`, unitId, name: "", firstName: "", lastName: "", source: 'direct', totalPrice: 0, commission: 0,
+        phone: "", email: "", whatsapp: "", instagram: "", line: "", facebook: "", preferredContact: "Whatsapp",
+        checkIn: format(today, "yyyy-MM-dd"), checkout: format(addMonths(today, 1), "yyyy-MM-dd"),
+        deposit: 0,
+        monthlyRate: unit.monthlyRate,
+        weeklyRate: unit.weeklyRate,
+        dailyRate: unit.dailyRate,
+        monthlyWaterCharge: 200,
+        electricRate: 8,
+        rentType: "month",
+        meterReadings: [],
+        payments: [],
+        notes: "",
+        status: "future",
+        lineItems: [],
+      };
+    }
+    if (newBookingData) {
+      newBookingData.lineItems = calculateLineItems(newBookingData.checkIn, newBookingData.checkout, newBookingData.dailyRate, newBookingData.weeklyRate, newBookingData.monthlyRate);
+    }
+    setModalData(newBookingData);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveModal = async () => {
+    if (!modalData.firstName || !modalData.checkIn || !modalData.checkout) {
+      handleShowAlert("First name, check-in, and checkout dates are required.");
+      return;
+    }
+    const otherBookings = bookings.filter(b => b.unitId === modalData.unitId);
+    if (isOverlap(modalData, otherBookings)) {
+      handleShowAlert("This booking overlaps with an existing one. Please choose different dates.");
+      return;
+    }
+    const updatedBooking = {
+      ...modalData,
+      name: `${modalData.firstName} ${modalData.lastName}`.trim(),
+    };
+    try {
+      if (bookings.find(b => b.id === updatedBooking.id)) {
+        await axios.put(`${API}/bookings/${updatedBooking.id}`, updatedBooking);
+      } else {
+        await axios.post(`${API}/bookings`, updatedBooking);
+      }
+      await fetchData();
+      handleShowAlert("Booking saved successfully!");
+      handleCloseModal();
+    } catch (e) {
+      console.error("Error saving booking:", e);
+      handleShowAlert("Failed to save booking. Please try again.");
+    }
+  };
+    
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
+
+  const handleOpenUnitModal = (unit) => {
+    setEditingUnit(unit);
+    setIsUnitModalOpen(true);
+  };
+    
+  const handleSaveUnit = async () => {
+    try {
+      if (units.find(u => u.id === editingUnit.id)) {
+        await axios.put(`${API}/units/${editingUnit.id}`, editingUnit);
+      } else {
+        await axios.post(`${API}/units`, editingUnit);
+      }
+      await fetchData();
+      handleShowAlert("Unit saved successfully!");
+      setIsUnitModalOpen(false);
+      setEditingUnit(null);
+    } catch (e) {
+      console.error("Error saving unit:", e);
+      handleShowAlert("Failed to save unit. Please try again.");
+    }
+  };
+
+  const handleDeleteProperty = async (propertyId) => {
+    setConfirmMessage('Are you sure you want to delete this property and all its units and bookings? This cannot be undone.');
+    setConfirmAction(() => async () => {
+      try {
+        await axios.delete(`${API}/properties/${propertyId}`);
+        await fetchData();
+        handleShowAlert('Property and all associated data deleted.');
+        setIsConfirmModalOpen(false);
+      } catch (e) {
+        console.error("Error deleting property:", e);
+        handleShowAlert("Failed to delete property. Please try again.");
+        setIsConfirmModalOpen(false);
+      }
+    });
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleDeleteUnit = async (unitId) => {
+    setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
+    setConfirmAction(() => async () => {
+      try {
+        await axios.delete(`${API}/units/${unitId}`);
+        await fetchData();
+        handleShowAlert('Unit and all associated data deleted.');
+        setIsConfirmModalOpen(false);
+      } catch (e) {
+        console.error("Error deleting unit:", e);
+        handleShowAlert("Failed to delete unit. Please try again.");
+        setIsConfirmModalOpen(false);
+      }
+    });
+    setIsConfirmModalOpen(true);
+  };
+
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredAndSortedBookings = () => {
+    let filtered = bookings;
+    const { unitId, guestName, checkInMonth, checkoutMonth, owedStatus } = accountingFilters;
+
+    if (unitId !== 'all') {
+      filtered = filtered.filter(b => b.unitId === unitId);
+    }
+    if (guestName) {
+      filtered = filtered.filter(b =>
+        b.firstName.toLowerCase().includes(guestName.toLowerCase()) ||
+        b.lastName.toLowerCase().includes(guestName.toLowerCase())
+      );
+    }
+    if (checkInMonth !== 'all') {
+      filtered = filtered.filter(b => format(parseISO(b.checkIn), 'MMMM') === checkInMonth);
+    }
+    if (checkoutMonth !== 'all') {
+      filtered = filtered.filter(b => format(parseISO(b.checkout), 'MMMM') === checkoutMonth);
+    }
+    if (owedStatus === 'owed') {
+      filtered = filtered.filter(b => getAmountDue(b) > 2);
+    } else if (owedStatus === 'paid') {
+      filtered = filtered.filter(b => getAmountDue(b) <= 2);
+    }
+
+    if (sortConfig.key) {
+      filtered.sort((a, b) => {
+        let valA, valB;
+        switch (sortConfig.key) {
+          case 'unit':
+            valA = units.find(u => u.id === a.unitId)?.name ?? '';
+            valB = units.find(u => u.id === b.unitId)?.name ?? '';
+            break;
+          case 'lastName':
+            valA = a.lastName?.toLowerCase() ?? '';
+            valB = b.lastName?.toLowerCase() ?? '';
+            break;
+          case 'firstName':
+            valA = a.firstName?.toLowerCase() ?? '';
+            valB = b.firstName?.toLowerCase() ?? '';
+            break;
+          case 'checkIn':
+            valA = parseISO(a.checkIn)?.getTime() ?? 0;
+            valB = parseISO(b.checkIn)?.getTime() ?? 0;
+            break;
+          case 'checkout':
+            valA = parseISO(a.checkout)?.getTime() ?? 0;
+            valB = parseISO(b.checkout)?.getTime() ?? 0;
+            break;
+          case 'rateType':
+            valA = a.lineItems?.[0]?.type ?? '';
+            valB = b.lineItems?.[0]?.type ?? '';
+            break;
+          case 'rate':
+            valA = a.lineItems?.[0]?.rate ?? 0;
+            valB = b.lineItems?.[0]?.rate ?? 0;
+            break;
+          case 'deposit':
+            valA = a.deposit ?? 0;
+            valB = b.deposit ?? 0;
+            break;
+          case 'totalCost':
+            valA = getTotalCost(a);
+            valB = getTotalCost(b);
+            break;
+          case 'totalPaid':
+            valA = getAmountPaid(a.payments);
+            valB = getAmountPaid(b.payments);
+            break;
+          case 'dueNow':
+            valA = getDueNow(a);
+            valB = getDueNow(b);
+            break;
+          case 'totalOwed':
+            valA = getAmountDue(a);
+            valB = getAmountDue(b);
+            break;
+          default:
+            valA = 0;
+            valB = 0;
+        }
+
+        if (valA < valB) return sortConfig.direction === 'ascending' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'ascending' ? 1 : -1;
+        return 0;
+      });
+    }
+    return filtered;
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-xl text-gray-600">Loading Property Management System...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+    <div className={`bg-gray-100 min-h-screen p-8 font-sans ${isFontSizeIncreased ? 'text-lg' : ''}`}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+        body { font-family: 'Roboto Condensed', sans-serif; }
+        .input-field {
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          padding: 0.5rem;
+          width: 100%;
+          transition: all 0.2s ease-in-out;
+          outline: none;
+        }
+        .input-field:focus {
+          border-color: #60a5fa;
+          box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
+        }
+        .contact-input {
+          padding: 0.5rem;
+          border-radius: 0.375rem;
+          border: 1px solid #d1d5db;
+          width: 100%;
+        }
+        .modal-grid-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        .w-20ch { width: 20ch; }
+        .w-15ch { width: 15ch; }
+        .w-10ch { width: 10ch; }
+        .text-sm {
+          font-size: ${isFontSizeIncreased ? '1.125rem' : '0.875rem'};
+        }
+        .text-xs {
+          font-size: ${isFontSizeIncreased ? '0.875rem' : '0.75rem'};
+        }
+        .text-sm-base {
+          font-size: ${isFontSizeIncreased ? '1.125rem' : '0.875rem'};
+          line-height: 1.25rem;
+        }
+        .text-xs-sm {
+          font-size: ${isFontSizeIncreased ? '0.875rem' : '0.75rem'};
+          line-height: 1rem;
+        }
+        .expanded-grid {
+          grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        }
+        .expanded-grid > div:nth-child(6) {
+          width: 10ch;
+        }
+        .accounting-expanded-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+              gap: 0.5rem;
+              align-items: center;
+        }
+        .accounting-expanded-grid > div:nth-child(6) {
+              width: 10ch;
+        }
+        .two-line-cell {
+          white-space: nowrap;
+        }
+      `}</style>
+      
+      {alertMessage && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white py-2 px-4 rounded-full shadow-lg z-[100]">
+          {alertMessage}
+        </div>
+      )}
+      
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-extrabold text-gray-900">Property Manager 🏡</h1>
+        <button onClick={toggleFontSize} className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
+          Toggle Font Size
+        </button>
+      </div>
+
+      <div className="mb-6 w-full">
+        {/* Tabs */}
+        <div className="flex justify-start space-x-2 mb-8">
+          <button
+              className="px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full text-white shadow-lg bg-purple-600 hover:bg-purple-700"
+              onClick={() => setIsRemindersModalOpen(true)}
+              >Reminders</button>
+          {['units', 'accounting'].map(tab => (
+            <button
+              key={tab}
+              className={`px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-blue-600'}`}
+              onClick={() => setActiveTab(tab)}
+            >{tab.charAt(0).toUpperCase() + tab.slice(1)}</button>
+          ))}
+        </div>
+        
+        {/* Main Content */}
+        <div className="container mx-auto w-full">
+          {activeTab === 'units' && (
+            <>
+              <div className="flex justify-between items-center my-4">
+                <div>
+                   <button onClick={saveData} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm mr-2">
+                     Export Data
+                   </button>
+                   <label htmlFor="load-file" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm cursor-pointer">
+                     Import Data
+                   </label>
+                   <input id="load-file" type="file" accept=".json" onChange={loadData} className="hidden"/>
+                </div>
+                <button
+                  onClick={() => setIsPropertyModalOpen(true)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors text-sm"
+                >
+                  New Property
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                {properties.map(property => (
+                  <div key={property.id} className="bg-white rounded-xl shadow-md p-6">
+                    <div className="flex justify-between items-center cursor-pointer" onClick={() => {
+                      const newExpanded = new Set(expandedProperties);
+                      if (newExpanded.has(property.id)) {
+                        newExpanded.delete(property.id);
+                      } else {
+                        newExpanded.add(property.id);
+                      }
+                      setExpandedProperties(newExpanded);
+                    }}>
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-2xl font-bold text-gray-800">{property.name}</h2>
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold">
+                            ❌
+                          </button>
+                      </div>
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-6 w-6 transform transition-transform ${expandedProperties.has(property.id) ? 'rotate-180' : ''}`}
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </span>
+                    </div>
+                    
+                    {expandedProperties.has(property.id) && (
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        {units.filter(u => u.propertyId === property.id).map(unit => {
+                          const allBookingsForUnit = bookings.filter(b => b.unitId === unit.id).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+                          const status = getUnitStatus(unit.id);
+                          const currentBooking = allBookingsForUnit.find(b => b.status === 'checkedIn');
+                          let statusColorClass = STATUS_COLORS[status];
+                          if(currentBooking && (getDueNow(currentBooking) - getAmountPaid(currentBooking.payments)) > 2) {
+                              statusColorClass = STATUS_COLORS['occupiedOwes']
+                          } else if (currentBooking) {
+                              statusColorClass = STATUS_COLORS['occupiedPaid']
+                          }
+                          const allBookings = allBookingsForUnit;
+                          const bookingElements = [];
+                          const sortedBookings = allBookings.sort((a, b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+                          
+                          if (sortedBookings.length > 0) {
+                            const firstCheckIn = parseISO(sortedBookings[0].checkIn);
+                            const vacantDaysStart = differenceInDays(firstCheckIn, today);
+                            if (isAfter(firstCheckIn, today) && vacantDaysStart > 0) {
+                              bookingElements.push(
+                                <div key={`vacant-start`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-xs py-1">
+                                  VACANT {format(today, 'dMMM').toUpperCase()} - {format(subDays(firstCheckIn, 1), 'dMMM').toUpperCase()} ({vacantDaysStart} days)
+                                </div>
+                              );
+                            }
+                            sortedBookings.forEach((b, index) => {
+                                const checkInDate = parseISO(b.checkIn);
+                                const isCurrent = isAfter(today, subDays(checkInDate, 1)) && isBefore(today, addDays(parseISO(b.checkout), 1));
+                                const balance = getDueNow(b) - getAmountPaid(b.payments);
+                                if (index > 0) {
+                                  const prevBooking = sortedBookings[index - 1];
+                                  const vacantDaysBetween = differenceInDays(checkInDate, parseISO(prevBooking.checkout));
+                                  if (vacantDaysBetween > 0) {
+                                    bookingElements.push(
+                                      <div key={`vacant-${prevBooking.id}`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-xs py-1">
+                                        VACANT {format(parseISO(prevBooking.checkout), 'dMMM').toUpperCase()} - {format(subDays(checkInDate, 1), 'dMMM').toUpperCase()} ({vacantDaysBetween} days)
+                                      </div>
+                                    );
+                                  }
+                                }
+                                bookingElements.push(
+                                    <p key={b.id} className={`my-1.5 flex justify-between items-center ${b.status === 'checkedOut' && (getAmountDue(b) > 2) ? 'font-bold italic text-red-500' : ''} ${isCurrent ? 'bg-green-200 border-green-500 border rounded-full my-2 px-2 py-1' : ''}`} style={{ fontSize: 'inherit' }}>
+                                        <span className="font-semibold uppercase cursor-pointer" onClick={() => handleOpenBookingModal(b)}>{b.name}</span>
+                                        <span className="text-gray-500 text-sm">
+                                            ({format(parseISO(b.checkIn), 'dMMM').toUpperCase()}-{format(parseISO(b.checkout), 'dMMMyy').toUpperCase()}) {getDisplayRate(b)} | Balance:
+                                            <span className={`font-bold ${balance > 2 ? 'text-red-700' : 'text-green-700'}`}>{balance.toFixed(0)}฿</span>
+                                        </span>
+                                    </p>
+                                );
+                            });
+                          } else {
+                              bookingElements.push(<p key="vacant" className="text-gray-500 italic text-xl mt-2">VACANT</p>);
+                          }
+                          
+                          return (
+                            <div key={unit.id} className={`relative p-6 rounded-xl shadow-md border-l-8 ${statusColorClass}`}>
+                              <h3 onClick={() => handleOpenUnitModal(unit)} className="text-2xl font-bold mb-2 text-gray-800 cursor-pointer hover:underline">{unit.name}</h3>
+                              <div className="mt-2" style={{ fontSize: isFontSizeIncreased ? '1em' : '0.875em' }}>
+                                {bookingElements}
+                              </div>
+                              <div className="absolute top-4 right-4 flex space-x-2">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold mr-2">
+                                    ❌
+                                  </button>
+                                <button
+                                  onClick={() => handleOpenBookingModal(null, unit.id)}
+                                  className="px-2 py-1 bg-white text-blue-500 rounded-full shadow-sm hover:bg-gray-100 transition-colors"
+                                >
+                                  New Booking
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        
+                        <div className="p-6 rounded-xl border-2 border-dashed border-gray-300 text-center flex flex-col justify-center items-center hover:bg-gray-50 transition-colors cursor-pointer"
+                            onClick={async () => {
+                              const newId = `unit-${Date.now()}`;
+                              const newUnit = {
+                                id: newId,
+                                propertyId: property.id,
+                                name: `Unit ${newId}`,
+                                description: '',
+                                internalNotes: '',
+                                dailyRate: 0,
+                                weeklyRate: 0,
+                                monthlyRate: 0,
+                                monthlyWaterCharge: 0,
+                              };
+                              try {
+                                await axios.post(`${API}/units`, newUnit);
+                                await fetchData();
+                                handleShowAlert('Unit added successfully!');
+                              } catch (e) {
+                                console.error("Error adding unit:", e);
+                                handleShowAlert("Failed to add unit. Please try again.");
+                              }
+                            }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                          <span className="mt-2 text-gray-600 font-medium">Add New Unit</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          
+          {activeTab === 'accounting' && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800">Accounting Overview</h2>
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-4 text-sm">
+                   <h3 className="font-bold">Filters:</h3>
+                   <label className="flex items-center gap-2">
+                     <span>Unit:</span>
+                     <select
+                       className="input-field w-24"
+                       value={accountingFilters.unitId}
+                       onChange={(e) => setAccountingFilters({ ...accountingFilters, unitId: e.target.value })}
+                     >
+                       <option value="all">All</option>
+                       {units.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                     </select>
+                   </label>
+                   <label className="flex items-center gap-2">
+                     <span>Guest:</span>
+                     <input
+                       type="text"
+                       className="input-field w-32"
+                       placeholder="Search name..."
+                       value={accountingFilters.guestName}
+                       onChange={(e) => setAccountingFilters({ ...accountingFilters, guestName: e.target.value })}
+                     />
+                   </label>
+                   <label className="flex items-center gap-2">
+                     <span>Check-In Month:</span>
+                     <select
+                       className="input-field w-28"
+                       value={accountingFilters.checkInMonth}
+                       onChange={(e) => setAccountingFilters({ ...accountingFilters, checkInMonth: e.target.value })}
+                     >
+                       <option value="all">All</option>
+                       {chronologicalMonths.slice(1).map(month => <option key={month} value={month}>{month}</option>)}
+                     </select>
+                   </label>
+                   <label className="flex items-center gap-2">
+                     <span>Checkout Month:</span>
+                     <select
+                       className="input-field w-28"
+                       value={accountingFilters.checkoutMonth}
+                       onChange={(e) => setAccountingFilters({ ...accountingFilters, checkoutMonth: e.target.value })}
+                     >
+                       <option value="all">All</option>
+                       {chronologicalMonths.slice(1).map(month => <option key={month} value={month}>{month}</option>)}
+                     </select>
+                   </label>
+                   <label className="flex items-center gap-2">
+                     <span>Owed Status:</span>
+                     <select
+                       className="input-field w-28"
+                       value={accountingFilters.owedStatus}
+                       onChange={(e) => setAccountingFilters({ ...accountingFilters, owedStatus: e.target.value })}
+                     >
+                       <option value="all">All</option>
+                       <option value="owed">Owed</option>
+                       <option value="paid">Paid</option>
+                     </select>
+                   </label>
+                 </div>
+               </div>
+               
+               <div className="flex flex-col">
+                 <div className="bg-gray-200 rounded-t-lg font-bold p-2 grid grid-cols-12 gap-2 text-xs border-b border-gray-300">
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('unit')}>Unit</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('lastName')}>Last Name</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('firstName')}>First Name</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('checkIn')}>Check-In</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('checkout')}>Checkout</div>
+                   <div className="w-10ch border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('rateType')}>Type</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('rate')}>Rate</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('deposit')}>Deposit</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('totalCost')}>Total Cost</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('totalPaid')}>Total Paid</div>
+                   <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('dueNow')}>Due Now</div>
+                   <div className="col-span-1 cursor-pointer" onClick={() => requestSort('totalOwed')}>Total Owed</div>
+                 </div>
+                 
+                 <div className="divide-y divide-gray-200">
+                   {filteredAndSortedBookings().map(booking => (
+                     <div key={booking.id}>
+                       <div className="grid grid-cols-12 gap-2 items-center text-sm py-2 hover:bg-gray-50">
+                         <div className="col-span-1 cursor-pointer" onClick={() => handleOpenUnitModal(units.find(u => u.id === booking.unitId))}>{units.find(u => u.id === booking.unitId)?.name}</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.lastName}</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.firstName}</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{format(parseISO(booking.checkIn), 'dLLLyy')}</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{format(parseISO(booking.checkout), 'dLLLyy')}</div>
+                         <div className="w-10ch capitalize cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{booking.lineItems.length > 0 ? booking.lineItems[0].type.charAt(0).toUpperCase() : ''}</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{booking.totalPrice > 0 ? (booking.totalPrice - booking.commission).toFixed(0) : (booking.lineItems.length > 0 ? booking.lineItems[0].rate : '')}฿</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{getAmountPaid(booking.payments) >= booking.deposit ? booking.deposit : 0}฿</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{getTotalCost(booking).toFixed(0)}฿</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{getAmountPaid(booking.payments).toFixed(0)}฿</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>{getDueNow(booking).toFixed(0)}฿</div>
+                         <div className="col-span-1 cursor-pointer" onClick={() => setExpandedRow(expandedRow === booking.id ? null : booking.id)}>
+                           <span className={`font-bold ${getAmountDue(booking) > 2 ? 'text-red-700' : 'text-green-700'}`}>
+                             {getAmountDue(booking).toFixed(0)}฿
+                           </span>
+                         </div>
+                       </div>
+                       
+                       {expandedRow === booking.id && (
+                         <div className="bg-gray-100 p-4 border-t border-gray-200">
+                             <div className="grid grid-cols-12 gap-2 text-sm text-blue-900">
+                             <div className="col-start-4 col-span-2 text-left">
+                                 <h4 className="font-bold">Rental Periods:</h4>
+                                 {booking.lineItems.map((item, index) => (
+                                    <div key={index} className="flex justify-start space-x-2">
+                                        <div>{format(parseISO(item.startDate), 'dLLLyy').toUpperCase()} -</div>
+                                        <div>{format(parseISO(item.endDate), 'dLLLyy').toUpperCase()}</div>
+                                    </div>
+                                   ))}
+                             </div>
+                             <div className="col-start-6 w-10ch text-left">
+                                 <h4 className="font-bold">Type:</h4>
+                                 {booking.lineItems.map((item, index) => (
+                                    <div key={index} className="capitalize">{item.type.charAt(0).toUpperCase()}</div>
+                                   ))}
+                             </div>
+                             <div className="col-start-7 col-span-1 text-left">
+                                 <h4 className="font-bold">Rate:</h4>
+                                 {booking.lineItems.map((item, index) => (
+                                    <div key={index}>{item.cost.toFixed(0)}฿</div>
+                                   ))}
+                             </div>
+                             <div className="col-start-9 col-span-2 text-left">
+                                 <h4 className="font-bold">Payments:</h4>
+                                 {booking.payments.map((payment, index) => (
+                                    <div key={index} className="flex justify-between">
+                                       <span className="text-left">{format(parseISO(payment.date), 'dLLLyy').toUpperCase()} ({payment.category})</span>
+                                       <span className="text-right">{payment.amount.toFixed(0)}฿</span>
+                                    </div>
+                                   ))}
+                             </div>
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                   ))}
+                 </div>
+               </div>
+               
+               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                 {/* Expense Section - Simplified for now */}
+                 <div className="bg-white p-6 rounded-lg shadow-md">
+                   <h3 className="text-xl font-bold mb-4 text-gray-800">Add New Expense</h3>
+                   <div className="space-y-4">
+                     <div className="flex gap-4">
+                       <div className="flex-1">
+                         <label className="text-sm font-medium">Date:</label>
+                         <input
+                           type="date"
+                           className="input-field"
+                           value={newExpense.date}
+                           onChange={e => setNewExpense({ ...newExpense, date: e.target.value })}
+                         />
+                       </div>
+                       <div className="flex-1">
+                         <label className="text-sm font-medium">Amount (฿):</label>
+                         <input
+                           type="number"
+                           className="input-field"
+                           value={newExpense.amount}
+                           onChange={e => setNewExpense({ ...newExpense, amount: Number(e.target.value) })}
+                         />
+                       </div>
+                     </div>
+                     <div>
+                       <label className="text-sm font-medium">Description:</label>
+                       <input
+                         type="text"
+                         className="input-field"
+                         value={newExpense.description}
+                         onChange={e => setNewExpense({ ...newExpense, description: e.target.value })}
+                       />
+                     </div>
+                     <div>
+                       <label className="text-sm font-medium">Category:</label>
+                       <select
+                         className="input-field"
+                         value={newExpense.category}
+                         onChange={e => setNewExpense({ ...newExpense, category: e.target.value })}
+                       >
+                         <option value="Rent">Rent</option>
+                         <option value="Salary">Salary</option>
+                         <option value="WiFi">WiFi</option>
+                         <option value="Electric">Electric</option>
+                         <option value="Water">Water</option>
+                         <option value="Upgrades">Upgrades</option>
+                         <option value="Repairs">Repairs</option>
+                         <option value="Other">Other</option>
+                       </select>
+                     </div>
+                     <div>
+                       <label className="text-sm font-medium">Property:</label>
+                       <select
+                         className="input-field"
+                         value={newExpense.propertyId}
+                         onChange={e => {
+                           setNewExpense({ ...newExpense, propertyId: e.target.value, unitId: '' });
+                         }}
+                       >
+                         <option value="">General</option>
+                         {properties.map(property => (
+                           <option key={property.id} value={property.id}>{property.name}</option>
+                         ))}
+                       </select>
+                     </div>
+                     {newExpense.propertyId && (
+                       <div>
+                         <label className="text-sm font-medium">Unit (Optional):</label>
+                         <select
+                           className="input-field"
+                           value={newExpense.unitId}
+                           onChange={e => setNewExpense({ ...newExpense, unitId: e.target.value })}
+                         >
+                           <option value="">Property-wide</option>
+                           {units.filter(u => u.propertyId === newExpense.propertyId).map(unit => (
+                             <option key={unit.id} value={unit.id}>{unit.name}</option>
+                           ))}
+                         </select>
+                       </div>
+                     )}
+                     <button onClick={async () => {
+                       if (!newExpense.amount || !newExpense.description || (!newExpense.propertyId && !newExpense.unitId)) {
+                         handleShowAlert("Please fill in all expense fields, and assign to a property or unit.");
+                         return;
+                       }
+                       try {
+                         await axios.post(`${API}/expenses`, newExpense);
+                         await fetchData();
+                         setNewExpense({ date: format(today, 'yyyy-MM-dd'), amount: 0, description: '', category: 'Repairs', propertyId: '', unitId: '' });
+                         handleShowAlert('Expense added successfully!');
+                       } catch (e) {
+                         console.error("Error adding expense:", e);
+                         handleShowAlert("Failed to add expense. Please try again.");
+                       }
+                     }} className="w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">Add Expense</button>
+                   </div>
+                 </div>
+                 
+                 {/* Report Section - Basic for now */}
+                 <div className="bg-white p-6 rounded-lg shadow-md">
+                   <h3 className="text-xl font-bold mb-4 text-gray-800">Financial Reports</h3>
+                   <div className="space-y-4">
+                     <div className="p-4 rounded-lg bg-green-50 border-l-4 border-green-700">
+                       <h4 className="font-bold">Summary</h4>
+                       <p>Total Income: <span className="font-semibold">{bookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0).toFixed(0)}฿</span></p>
+                       <p>Total Expenses: <span className="font-semibold">{expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(0)}฿</span></p>
+                       <p className="mt-2 font-bold text-lg">Net Income: <span className="text-green-700">{(bookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0) - expenses.reduce((sum, e) => sum + e.amount, 0)).toFixed(0)}฿</span></p>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           )}
+        </div>
+      </div>
+      
+      {/* Continue with all your modals... I'll add a few key ones first */}
+      
+      {/* New Property Modal */}
+      {isPropertyModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => setIsPropertyModalOpen(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Property</h2>
+            <div className="flex flex-col space-y-4">
+              <label className="text-sm font-medium">Property Name:</label>
+              <input
+                type="text"
+                className="input-field"
+                value={newProperty.name}
+                onChange={e => setNewProperty({ name: e.target.value })}
+                placeholder="e.g., 123 Main Street"
+              />
+              <button
+                onClick={async () => {
+                  if (!newProperty.name) {
+                    handleShowAlert("Property name cannot be empty.");
+                    return;
+                  }
+                  try {
+                    await axios.post(`${API}/properties`, { name: newProperty.name });
+                    await fetchData();
+                    setNewProperty({ name: '' });
+                    setIsPropertyModalOpen(false);
+                    handleShowAlert('Property created successfully!');
+                  } catch (e) {
+                    console.error("Error creating property:", e);
+                    handleShowAlert("Failed to create property. Please try again.");
+                  }
+                }}
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+              >
+                Create Property
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Reminders Modal */}
+      {isRemindersModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => setIsRemindersModalOpen(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Upcoming Reminders</h2>
+            <div className="space-y-2">
+              <h3 className="font-bold text-gray-700">All Reminders</h3>
+              {reminders.length > 0 ? (
+                reminders
+                  .sort((a, b) => a.date - b.date)
+                  .map((r, index) => (
+                    <div key={index} className={`flex justify-between items-center p-3 rounded-md border text-sm ${r.type === 'checkin' ? 'bg-blue-100 border-blue-500' : r.type === 'checkout' ? 'bg-red-100 border-red-500' : r.type === 'rent' ? 'bg-green-100 border-green-500' : r.type === 'vacant' ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-100 border-gray-500'}`}>
+                      <div>
+                        <p className="font-bold">{format(r.date, 'MMM d, yyyy')}</p>
+                        <p>{r.text}</p>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <p className="text-gray-500 italic text-center">No upcoming reminders.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full relative">
+            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+            <p className="mb-6">{confirmMessage}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-400"
+                onClick={() => setIsConfirmModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                onClick={() => confirmAction()}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
