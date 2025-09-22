@@ -330,6 +330,11 @@ async def export_data():
         bookings = await db.bookings.find().to_list(1000)
         expenses = await db.expenses.find().to_list(1000)
         
+        # Remove MongoDB ObjectId fields to avoid serialization issues
+        for item in properties + units + bookings + expenses:
+            if '_id' in item:
+                del item['_id']
+        
         return {
             "properties": properties,
             "units": units,
