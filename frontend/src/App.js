@@ -91,20 +91,25 @@ const getDueNowRent = (booking) => {
 
 const getDueNow = (booking) => {
   const today = new Date();
-  const checkInDate = parseISO(booking.checkIn);
+  try {
+    const checkInDate = typeof booking.checkIn === 'string' ? parseISO(booking.checkIn) : new Date(booking.checkIn);
 
-  if (isAfter(checkInDate, today)) {
+    if (isAfter(checkInDate, today)) {
+      return 0;
+    }
+    const rentDueNow = getDueNowRent(booking);
+    let waterDueNow = 0;
+    const numMonthsPassed = differenceInMonths(today, checkInDate);
+    waterDueNow = numMonthsPassed * (booking.monthlyWaterCharge || 0);
+    const electricDueNow = getMeterCost(booking.meterReadings, booking.electricRate);
+
+    const totalDue = (booking.deposit || 0) + rentDueNow + electricDueNow + waterDueNow;
+
+    return totalDue;
+  } catch (error) {
+    console.error('Error calculating due now:', error);
     return 0;
   }
-  const rentDueNow = getDueNowRent(booking);
-  let waterDueNow = 0;
-  const numMonthsPassed = differenceInMonths(today, checkInDate);
-  waterDueNow = numMonthsPassed * (booking.monthlyWaterCharge || 0);
-  const electricDueNow = getMeterCost(booking.meterReadings, booking.electricRate);
-
-  const totalDue = (booking.deposit || 0) + rentDueNow + electricDueNow + waterDueNow;
-
-  return totalDue;
 };
 
 const getNextPaymentDueDate = (booking) => {
