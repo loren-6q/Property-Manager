@@ -1672,7 +1672,7 @@ function App() {
                            ) : (
                                modalData.lineItems.map((item, index) => (
                                <li key={index} className="flex justify-between">
-                                   <span>{format(parseISO(item.startDate), 'dMMM').toUpperCase()} - {format(parseISO(item.endDate), 'dMMM').toUpperCase()}:</span>
+                                   <span>{format(typeof item.startDate === 'string' ? parseISO(item.startDate) : new Date(item.startDate), 'dMMM').toUpperCase()} - {format(typeof item.endDate === 'string' ? parseISO(item.endDate) : new Date(item.endDate), 'dMMM').toUpperCase()}:</span>
                                    <span>{item.cost.toFixed(0)}฿ ({item.type.charAt(0).toUpperCase()})</span>
                                </li>
                                ))
