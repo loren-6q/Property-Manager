@@ -66,19 +66,27 @@ const getAmountDue = (booking) => {
 
 const getDueNowRent = (booking) => {
   const today = new Date();
-  const checkInDate = parseISO(booking.checkIn);
+  try {
+    const checkInDate = typeof booking.checkIn === 'string' ? parseISO(booking.checkIn) : new Date(booking.checkIn);
 
-  if (isAfter(checkInDate, today)) {
+    if (isAfter(checkInDate, today)) {
+      return 0;
+    }
+
+    if (booking.totalPrice && booking.totalPrice > 0) {
+      return booking.totalPrice - (booking.commission || 0);
+    }
+      
+    return booking.lineItems
+      .filter(item => {
+        const itemStartDate = typeof item.startDate === 'string' ? parseISO(item.startDate) : new Date(item.startDate);
+        return isBefore(itemStartDate, today) || isSameDay(itemStartDate, today);
+      })
+      .reduce((sum, item) => sum + item.cost, 0);
+  } catch (error) {
+    console.error('Error calculating due now rent:', error);
     return 0;
   }
-
-  if (booking.totalPrice && booking.totalPrice > 0) {
-    return booking.totalPrice - (booking.commission || 0);
-  }
-    
-  return booking.lineItems
-    .filter(item => isBefore(parseISO(item.startDate), today) || isSameDay(parseISO(item.startDate), today))
-    .reduce((sum, item) => sum + item.cost, 0);
 };
 
 const getDueNow = (booking) => {
