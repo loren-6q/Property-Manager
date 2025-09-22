@@ -1505,6 +1505,39 @@ function App() {
                 </div>
               </div>
               
+              {/* Source and Pricing Info */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Source:</label>
+                  <select
+                    className="input-field"
+                    name="source"
+                    value={modalData.source}
+                    onChange={(e) => setModalData(prev => ({ ...prev, source: e.target.value }))}
+                  >
+                    <option value="direct">Direct</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="airbnb">AirBnB</option>
+                    <option value="agent">Agent</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Total Price:</label>
+                  <input type="number" className="input-field" name="totalPrice" value={modalData.totalPrice ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, totalPrice: Number(e.target.value) }))} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Commission:</label>
+                  <input type="number" className="input-field" name="commission" value={modalData.commission ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, commission: Number(e.target.value) }))} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Net Price:</label>
+                  <div className="input-field bg-gray-200 cursor-not-allowed">
+                    {((modalData.totalPrice || 0) - (modalData.commission || 0)).toFixed(2)}฿
+                  </div>
+                </div>
+              </div>
+              
               {/* Payments and Meter Readings */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                 {/* Payments */}
