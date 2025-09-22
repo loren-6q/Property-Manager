@@ -1212,15 +1212,27 @@ function App() {
                    </div>
                  </div>
                  
-                 {/* Report Section - Basic for now */}
+                 {/* Report Section - Enhanced */}
                  <div className="bg-white p-6 rounded-lg shadow-md">
                    <h3 className="text-xl font-bold mb-4 text-gray-800">Financial Reports</h3>
                    <div className="space-y-4">
                      <div className="p-4 rounded-lg bg-green-50 border-l-4 border-green-700">
                        <h4 className="font-bold">Summary</h4>
-                       <p>Total Income: <span className="font-semibold">{bookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0).toFixed(0)}฿</span></p>
+                       <p>Total Income: <span className="font-semibold">{bookings.reduce((sum, b) => {
+                         // Only count non-deposit payments as income
+                         const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
+                         return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
+                       }, 0).toFixed(0)}฿</span></p>
+                       <p>Total Deposits Collected: <span className="font-semibold">{bookings.reduce((sum, b) => {
+                         // Count only deposit payments
+                         const depositPayments = b.payments.filter(p => p.category === 'Deposit');
+                         return sum + depositPayments.reduce((pSum, p) => pSum + p.amount, 0);
+                       }, 0).toFixed(0)}฿</span></p>
                        <p>Total Expenses: <span className="font-semibold">{expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(0)}฿</span></p>
-                       <p className="mt-2 font-bold text-lg">Net Income: <span className="text-green-700">{(bookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0) - expenses.reduce((sum, e) => sum + e.amount, 0)).toFixed(0)}฿</span></p>
+                       <p className="mt-2 font-bold text-lg">Net Income: <span className="text-green-700">{(bookings.reduce((sum, b) => {
+                         const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
+                         return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
+                       }, 0) - expenses.reduce((sum, e) => sum + e.amount, 0)).toFixed(0)}฿</span></p>
                      </div>
                    </div>
                  </div>
