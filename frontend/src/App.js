@@ -799,7 +799,7 @@ function App() {
               className="px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full text-white shadow-lg bg-purple-600 hover:bg-purple-700"
               onClick={() => setIsRemindersModalOpen(true)}
               >Reminders</button>
-          {['units', 'accounting'].map(tab => (
+          {['units', 'accounting', 'reports', 'clients'].map(tab => (
             <button
               key={tab}
               className={`px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-blue-600'}`}
