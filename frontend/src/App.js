@@ -38,15 +38,20 @@ const getRentCost = (booking) => {
 
 const getWaterCost = (booking) => {
   if (!booking.checkIn || !booking.checkout) return 0;
-  const checkInDate = parseISO(booking.checkIn);
-  const checkoutDate = parseISO(booking.checkout);
-  const numMonths = differenceInMonths(checkoutDate, checkInDate);
-  let waterCost = numMonths * booking.monthlyWaterCharge;
-  const remainingDays = differenceInDays(checkoutDate, addMonths(checkInDate, numMonths));
-  if (remainingDays >= 28) {
-    waterCost += booking.monthlyWaterCharge;
+  try {
+    const checkInDate = typeof booking.checkIn === 'string' ? parseISO(booking.checkIn) : new Date(booking.checkIn);
+    const checkoutDate = typeof booking.checkout === 'string' ? parseISO(booking.checkout) : new Date(booking.checkout);
+    const numMonths = differenceInMonths(checkoutDate, checkInDate);
+    let waterCost = numMonths * booking.monthlyWaterCharge;
+    const remainingDays = differenceInDays(checkoutDate, addMonths(checkInDate, numMonths));
+    if (remainingDays >= 28) {
+      waterCost += booking.monthlyWaterCharge;
+    }
+    return waterCost;
+  } catch (error) {
+    console.error('Error calculating water cost:', error);
+    return 0;
   }
-  return waterCost;
 };
 
 const getTotalCost = (booking) => {
