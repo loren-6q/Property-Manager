@@ -364,14 +364,19 @@ function App() {
 
   const getDaysDuration = (startDate, endDate) => {
     if (!startDate || !endDate) return "";
-    const start = parseISO(startDate);
-    const end = parseISO(endDate);
-    if (!start || !end || isAfter(start, end)) return "";
-    const months = differenceInMonths(end, start);
-    const remainingDaysAfterMonths = differenceInDays(end, addMonths(start, months));
-    const weeks = Math.floor(remainingDaysAfterMonths / 7);
-    const days = remainingDaysAfterMonths % 7;
-    return `${months}m ${weeks}w ${days}d`;
+    try {
+      const start = typeof startDate === 'string' ? parseISO(startDate) : new Date(startDate);
+      const end = typeof endDate === 'string' ? parseISO(endDate) : new Date(endDate);
+      if (!start || !end || isAfter(start, end)) return "";
+      const months = differenceInMonths(end, start);
+      const remainingDaysAfterMonths = differenceInDays(end, addMonths(start, months));
+      const weeks = Math.floor(remainingDaysAfterMonths / 7);
+      const days = remainingDaysAfterMonths % 7;
+      return `${months}m ${weeks}w ${days}d`;
+    } catch (error) {
+      console.error('Error calculating duration:', error);
+      return "";
+    }
   };
 
   const saveData = async () => {
