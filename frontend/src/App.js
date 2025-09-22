@@ -1309,6 +1309,524 @@ function App() {
           </div>
         </div>
       )}
+      
+      {/* Booking Modal */}
+      {isModalOpen && modalData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={handleCloseModal}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
+            <div className="mt-6 flex flex-col gap-4">
+              {/* Guest & Contact Info */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">First Name:</label>
+                  <input type="text" className="input-field w-20ch" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
+                    const { name, value } = e.target;
+                    setModalData(prev => {
+                      const updatedData = { ...prev, [name]: value };
+                      if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
+                        const newCheckIn = updatedData.checkIn;
+                        const newCheckout = updatedData.checkout;
+                        if (newCheckIn && newCheckout) {
+                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                        }
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Last Name:</label>
+                  <input type="text" className="input-field w-20ch" name="lastName" value={modalData.lastName ?? ''} onChange={(e) => {
+                    const { name, value } = e.target;
+                    setModalData(prev => ({ ...prev, [name]: value }));
+                  }} />
+                </div>
+                <div className="flex items-center gap-1 text-xs pt-2">
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="checkedIn" checked={modalData.status === "checkedIn"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span style={{fontSize: '0.65rem'}}>Checked In</span>
+                    </label>
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="checkedOut" checked={modalData.status === "checkedOut"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span style={{fontSize: '0.65rem'}}>Checkout</span>
+                    </label>
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="future" checked={modalData.status === "future"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span style={{fontSize: '0.65rem'}}>None</span>
+                    </label>
+                </div>
+              </div>
+              
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Phone" checked={modalData.preferredContact === "Phone"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">Phone:</span>
+                  <input type="text" className="input-field w-20ch" name="phone" value={modalData.phone ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, phone: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Email" checked={modalData.preferredContact === "Email"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">Email:</span>
+                  <input type="text" className="input-field w-20ch" name="email" value={modalData.email ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, email: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Whatsapp" checked={modalData.preferredContact === "Whatsapp"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">Whatsapp:</span>
+                  <input type="text" className="input-field w-20ch" name="whatsapp" value={modalData.whatsapp ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, whatsapp: e.target.value }))} />
+                </label>
+              </div>
+              
+              {/* Booking Info */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Check-in:</label>
+                  <input type="date" className="input-field w-20ch" name="checkIn" value={modalData.checkIn ?? ''} onChange={(e) => {
+                    const { name, value } = e.target;
+                    setModalData(prev => {
+                      const updatedData = { ...prev, [name]: value };
+                      if (name === 'checkIn' || name === 'checkout') {
+                        const newCheckIn = updatedData.checkIn;
+                        const newCheckout = updatedData.checkout;
+                        if (newCheckIn && newCheckout) {
+                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                        }
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                  <span className="text-xs text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Checkout:</label>
+                  <input type="date" className="input-field w-20ch" name="checkout" value={modalData.checkout ?? ''} onChange={(e) => {
+                    const { name, value } = e.target;
+                    setModalData(prev => {
+                      const updatedData = { ...prev, [name]: value };
+                      if (name === 'checkIn' || name === 'checkout') {
+                        const newCheckIn = updatedData.checkIn;
+                        const newCheckout = updatedData.checkout;
+                        if (newCheckIn && newCheckout) {
+                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                        }
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Deposit (฿):</label>
+                  <input type="number" className="input-field w-20ch" name="deposit" value={modalData.deposit ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, deposit: Number(e.target.value) }))} />
+                </div>
+              </div>
+              
+              {/* Rates */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Monthly Rate (฿):</label>
+                  <input type="number" className="input-field w-20ch" name="monthlyRate" value={modalData.monthlyRate ?? 0} onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setModalData(prev => {
+                      const updatedData = { ...prev, monthlyRate: value };
+                      if (updatedData.checkIn && updatedData.checkout) {
+                        updatedData.lineItems = calculateLineItems(updatedData.checkIn, updatedData.checkout, updatedData.dailyRate, updatedData.weeklyRate, value);
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <input type="number" className="input-field w-20ch" name="weeklyRate" value={modalData.weeklyRate ?? 0} onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setModalData(prev => {
+                      const updatedData = { ...prev, weeklyRate: value };
+                      if (updatedData.checkIn && updatedData.checkout) {
+                        updatedData.lineItems = calculateLineItems(updatedData.checkIn, updatedData.checkout, updatedData.dailyRate, value, updatedData.monthlyRate);
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <input type="number" className="input-field w-20ch" name="dailyRate" value={modalData.dailyRate ?? 0} onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setModalData(prev => {
+                      const updatedData = { ...prev, dailyRate: value };
+                      if (updatedData.checkIn && updatedData.checkout) {
+                        updatedData.lineItems = calculateLineItems(updatedData.checkIn, updatedData.checkout, value, updatedData.weeklyRate, updatedData.monthlyRate);
+                      }
+                      return updatedData;
+                    });
+                  }} />
+                </div>
+              </div>
+              
+              {/* Payments and Meter Readings */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                {/* Payments */}
+                <div className="bg-white p-4 rounded-lg shadow-inner">
+                  <h3 className="font-bold mb-2">Payments</h3>
+                  <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
+                    {modalData.payments?.map((p, idx) => (
+                      <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
+                        <input
+                          type="date"
+                          value={p.date ?? ''}
+                          onChange={(e) => {
+                            const newPayments = [...modalData.payments];
+                            newPayments[idx] = { ...newPayments[idx], date: e.target.value };
+                            setModalData(prev => ({ ...prev, payments: newPayments }));
+                          }}
+                          className="w-24 text-xs border rounded-md"
+                        />
+                        <select
+                          className="w-20 text-xs border rounded-md"
+                          value={p.category ?? 'Rent'}
+                          onChange={(e) => {
+                            const newPayments = [...modalData.payments];
+                            newPayments[idx] = { ...newPayments[idx], category: e.target.value };
+                            setModalData(prev => ({ ...prev, payments: newPayments }));
+                          }}
+                        >
+                          <option value="Rent">Rent</option>
+                          <option value="Utility">Utility</option>
+                          <option value="Deposit">Deposit</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        <input
+                          type="number"
+                          value={p.amount ?? 0}
+                          onChange={(e) => {
+                            const newPayments = [...modalData.payments];
+                            newPayments[idx] = { ...newPayments[idx], amount: Number(e.target.value) };
+                            setModalData(prev => ({ ...prev, payments: newPayments }));
+                          }}
+                          className="w-16 text-xs text-right border rounded-md"
+                        />฿
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      id="newPaymentAmount"
+                      placeholder="Amount"
+                      className="input-field mr-2 w-24"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          const amount = Number(e.target.value);
+                          const category = document.getElementById("newPaymentCategory").value;
+                          if (amount > 0) {
+                            setModalData(prev => ({
+                              ...prev,
+                              payments: [...prev.payments, { date: format(new Date(), 'yyyy-MM-dd'), amount, category }]
+                            }));
+                            e.target.value = "";
+                          }
+                        }
+                      }}
+                    />
+                    <select id="newPaymentCategory" className="input-field mr-2 w-24">
+                          <option value="Rent">Rent</option>
+                          <option value="Utility">Utility</option>
+                          <option value="Deposit">Deposit</option>
+                          <option value="Other">Other</option>
+                    </select>
+                    <button
+                      className="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600"
+                      onClick={() => {
+                        const input = document.getElementById("newPaymentAmount");
+                        const category = document.getElementById("newPaymentCategory");
+                        const amount = Number(input.value);
+                        if (amount > 0) {
+                          setModalData(prev => ({
+                            ...prev,
+                            payments: [...prev.payments, { date: format(new Date(), 'yyyy-MM-dd'), amount, category: category.value }]
+                          }));
+                          input.value = "";
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Meter Readings */}
+                <div className="bg-white p-4 rounded-lg shadow-inner">
+                  <h3 className="font-bold mb-2">Meter Readings</h3>
+                  <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
+                    {modalData.meterReadings?.map((m, idx) => (
+                      <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
+                        <input
+                          type="date"
+                          value={m.date ?? ''}
+                          onChange={(e) => {
+                            const newReadings = [...modalData.meterReadings];
+                            newReadings[idx].date = e.target.value;
+                            setModalData(prev => ({ ...prev, meterReadings: newReadings }));
+                          }}
+                          className="w-24 text-xs border rounded-md"
+                        />
+                        <input
+                          type="number"
+                          value={m.reading ?? 0}
+                          onChange={(e) => {
+                            const newReadings = [...modalData.meterReadings];
+                            newReadings[idx].reading = Number(e.target.value);
+                            setModalData(prev => ({ ...prev, meterReadings: newReadings }));
+                          }}
+                          className="w-16 text-xs text-right border rounded-md"
+                        />
+                        <span className="text-xs font-semibold">
+                          {idx > 0 ? ((m.reading - modalData.meterReadings[idx-1].reading) * (modalData.electricRate ?? meterRate)).toFixed(0) : 0}฿
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      id="newMeterReading"
+                      placeholder="Reading"
+                      className="input-field mr-2 w-24"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          const reading = Number(e.target.value);
+                          if (reading > 0) {
+                            setModalData(prev => ({
+                              ...prev,
+                              meterReadings: [...prev.meterReadings, { date: format(new Date(), 'yyyy-MM-dd'), reading }]
+                            }));
+                            e.target.value = "";
+                          }
+                        }
+                      }}
+                    />
+                    <button
+                      className="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600"
+                      onClick={() => {
+                        const input = document.getElementById("newMeterReading");
+                        const reading = Number(input.value);
+                        if (reading > 0) {
+                          setModalData(prev => ({
+                            ...prev,
+                            meterReadings: [...prev.meterReadings, { date: format(new Date(), 'yyyy-MM-dd'), reading }]
+                          }));
+                          input.value = "";
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="flex flex-col mt-4">
+                      <label className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Electric (฿/kWh):</span>
+                        <input type="number" className="input-field w-15ch" name="electricRate" value={modalData.electricRate ?? meterRate} onChange={(e) => setModalData(prev => ({ ...prev, electricRate: Number(e.target.value) }))} />
+                      </label>
+                  </div>
+                  <div className="flex flex-col mt-4">
+                      <label className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Water (฿/Mo):</span>
+                            <input type="number" className="input-field w-20ch" name="monthlyWaterCharge" value={modalData.monthlyWaterCharge ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, monthlyWaterCharge: Number(e.target.value) }))} />
+                      </label>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Financial Summary */}
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8 p-4 border rounded-lg bg-gray-50">
+                <div>
+                  <h4 className="font-bold mb-2">Total Costs</h4>
+                  <ul className="text-sm space-y-1">
+                    <li className="flex justify-between cursor-pointer" onClick={() => setIsRentBreakdownExpanded(!isRentBreakdownExpanded)}>
+                      <span className="text-gray-600">Total Rent:</span>
+                      <span className="font-semibold">{getRentCost(modalData).toFixed(0)}฿</span>
+                    </li>
+                    {isRentBreakdownExpanded && (
+                      <div className="mt-2 text-sm bg-gray-100 p-2 rounded">
+                        <h5 className="font-semibold mb-1">Rental Breakdown:</h5>
+                        <ul className="space-y-1">
+                          {modalData.totalPrice && modalData.totalPrice > 0 ? (
+                            <li className="flex justify-between">
+                               <span>Net Price:</span>
+                               <span>{(modalData.totalPrice - modalData.commission).toFixed(0)}฿</span>
+                            </li>
+                           ) : (
+                               modalData.lineItems.map((item, index) => (
+                               <li key={index} className="flex justify-between">
+                                   <span>{format(parseISO(item.startDate), 'dMMM').toUpperCase()} - {format(parseISO(item.endDate), 'dMMM').toUpperCase()}:</span>
+                                   <span>{item.cost.toFixed(0)}฿ ({item.type.charAt(0).toUpperCase()})</span>
+                               </li>
+                               ))
+                           )}
+                        </ul>
+                      </div>
+                    )}
+                    <li className="flex justify-between cursor-pointer" onClick={() => setIsElectricBreakdownExpanded(!isElectricBreakdownExpanded)}>
+                      <span className="text-gray-600">Total Electric:</span>
+                      <span className="font-semibold">{getMeterCost(modalData.meterReadings, modalData.electricRate || meterRate).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between cursor-pointer" onClick={() => setIsWaterBreakdownExpanded(!isWaterBreakdownExpanded)}>
+                      <span className="text-gray-600">Total Water:</span>
+                      <span className="font-semibold">{getWaterCost(modalData).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Deposit:</span>
+                      <span className="font-semibold">{modalData.deposit.toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between font-bold pt-2 mt-2 border-t">
+                      <span>Total Cost:</span>
+                      <span>{getTotalCost(modalData).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Amount Paid:</span>
+                      <span className="font-semibold">{getAmountPaid(modalData.payments).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between font-bold">
+                      <span>Total Due:</span>
+                      <span>{getAmountDue(modalData).toFixed(0)}฿</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-bold mb-2">Current Costs</h4>
+                  <ul className="text-sm space-y-1">
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Rent:</span>
+                      <span className="font-semibold">{getDueNowRent(modalData).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Electric:</span>
+                      <span className="font-semibold">{getMeterCost(modalData.meterReadings, modalData.electricRate || meterRate).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Water:</span>
+                      <span className="font-semibold">{(differenceInMonths(today, parseISO(modalData.checkIn)) * (modalData.monthlyWaterCharge || 0)).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Deposit:</span>
+                      <span className="font-semibold">{modalData.deposit.toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between font-bold pt-2 mt-2 border-t">
+                      <span>Total Due Now:</span>
+                      <span>{getDueNow(modalData).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Amount Paid:</span>
+                      <span className="font-semibold">{getAmountPaid(modalData.payments).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between font-bold">
+                      <span>Remaining Balance:</span>
+                      <span>{(getDueNow(modalData) - getAmountPaid(modalData.payments)).toFixed(0)}฿</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-400" onClick={handleCloseModal}>Close</button>
+              <button className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600" onClick={handleSaveModal}>Save Booking</button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Unit Edit Modal */}
+      {isUnitModalOpen && editingUnit && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => setIsUnitModalOpen(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold text-gray-800">Edit Unit: {editingUnit.name ?? ''}</h2>
+            <div className="mt-6 space-y-4">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium">Unit Name:</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  value={editingUnit.name ?? ''}
+                  onChange={e => setEditingUnit(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium">Property:</label>
+                <select
+                  className="input-field"
+                  value={editingUnit.propertyId}
+                  onChange={e => setEditingUnit(prev => ({ ...prev, propertyId: e.target.value }))}
+                >
+                  {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium">Description:</label>
+                <textarea
+                  className="input-field h-24"
+                  value={editingUnit.description ?? ''}
+                  onChange={e => setEditingUnit(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={editingUnit.dailyRate ?? 0}
+                    onChange={e => setEditingUnit(prev => ({ ...prev, dailyRate: Number(e.target.value) }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={editingUnit.weeklyRate ?? 0}
+                    onChange={e => setEditingUnit(prev => ({ ...prev, weeklyRate: Number(e.target.value) }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium">Monthly Rate:</label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={editingUnit.monthlyRate ?? 0}
+                    onChange={e => setEditingUnit(prev => ({ ...prev, monthlyRate: Number(e.target.value) }))}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button className="bg-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-400" onClick={() => setIsUnitModalOpen(false)}>Cancel</button>
+              <button className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600" onClick={handleSaveUnit}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
