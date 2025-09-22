@@ -1240,6 +1240,309 @@ function App() {
                </div>
              </div>
            )}
+           
+           {activeTab === 'reports' && (
+             <div className="bg-white p-6 rounded-lg shadow-md">
+               <h2 className="text-2xl font-bold mb-4 text-gray-800">Financial Reports & Analysis</h2>
+               
+               {/* Report Generation */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                 <div className="bg-gray-50 p-6 rounded-lg">
+                   <h3 className="text-xl font-bold mb-4">Generate Excel Reports</h3>
+                   <div className="space-y-4">
+                     <button 
+                       onClick={() => {
+                         const reportData = [];
+                         bookings.forEach(booking => {
+                           const unit = units.find(u => u.id === booking.unitId);
+                           const property = properties.find(p => p.id === unit?.propertyId);
+                           reportData.push({
+                             'Property': property?.name || 'Unknown',
+                             'Unit': unit?.name || 'Unknown',
+                             'Guest Name': `${booking.firstName} ${booking.lastName}`.trim(),
+                             'Check-in': booking.checkIn,
+                             'Checkout': booking.checkout,
+                             'Source': booking.source,
+                             'Total Cost': getTotalCost(booking),
+                             'Amount Paid': getAmountPaid(booking.payments),
+                             'Amount Due': getAmountDue(booking),
+                             'Deposit': booking.deposit,
+                             'Status': booking.status,
+                             'Contact': booking.preferredContact,
+                             'Phone': booking.phone,
+                             'Email': booking.email,
+                             'Notes': booking.notes
+                           });
+                         });
+                         
+                         const ws = XLSX.utils.json_to_sheet(reportData);
+                         const wb = XLSX.utils.book_new();
+                         XLSX.utils.book_append_sheet(wb, ws, "Bookings Report");
+                         XLSX.writeFile(wb, `bookings_report_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+                         handleShowAlert('Bookings report exported to Excel!');
+                       }}
+                       className="w-full bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+                     >
+                       📊 Export Bookings Report
+                     </button>
+                     
+                     <button 
+                       onClick={() => {
+                         const reportData = [];
+                         properties.forEach(property => {
+                           const propertyUnits = units.filter(u => u.propertyId === property.id);
+                           const propertyBookings = bookings.filter(b => propertyUnits.some(u => u.id === b.unitId));
+                           const totalIncome = propertyBookings.reduce((sum, b) => {
+                             const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
+                             return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
+                           }, 0);
+                           const totalDeposits = propertyBookings.reduce((sum, b) => {
+                             const depositPayments = b.payments.filter(p => p.category === 'Deposit');
+                             return sum + depositPayments.reduce((pSum, p) => pSum + p.amount, 0);
+                           }, 0);
+                           const propertyExpenses = expenses.filter(e => e.propertyId === property.id);
+                           const totalExpenses = propertyExpenses.reduce((sum, e) => sum + e.amount, 0);
+                           
+                           reportData.push({
+                             'Property': property.name,
+                             'Units': propertyUnits.length,
+                             'Total Bookings': propertyBookings.length,
+                             'Total Income': totalIncome,
+                             'Total Deposits': totalDeposits,
+                             'Total Expenses': totalExpenses,
+                             'Net Profit': totalIncome - totalExpenses,
+                             'Occupancy Rate': `${propertyBookings.length > 0 ? ((propertyBookings.length / propertyUnits.length) * 100).toFixed(1) : 0}%`
+                           });
+                         });
+                         
+                         const ws = XLSX.utils.json_to_sheet(reportData);
+                         const wb = XLSX.utils.book_new();
+                         XLSX.utils.book_append_sheet(wb, ws, "Property Performance");
+                         XLSX.writeFile(wb, `property_performance_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+                         handleShowAlert('Property performance report exported!');
+                       }}
+                       className="w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+                     >
+                       🏢 Export Property Performance
+                     </button>
+                     
+                     <button 
+                       onClick={() => {
+                         const reportData = expenses.map(expense => {
+                           const property = properties.find(p => p.id === expense.propertyId);
+                           const unit = units.find(u => u.id === expense.unitId);
+                           return {
+                             'Date': expense.date,
+                             'Property': property?.name || 'General',
+                             'Unit': unit?.name || 'Property-wide',
+                             'Category': expense.category,
+                             'Description': expense.description,
+                             'Amount': expense.amount
+                           };
+                         });
+                         
+                         const ws = XLSX.utils.json_to_sheet(reportData);
+                         const wb = XLSX.utils.book_new();
+                         XLSX.utils.book_append_sheet(wb, ws, "Expenses Report");
+                         XLSX.writeFile(wb, `expenses_report_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+                         handleShowAlert('Expenses report exported!');
+                       }}
+                       className="w-full bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                     >
+                       💰 Export Expenses Report
+                     </button>
+                   </div>
+                 </div>
+                 
+                 {/* In-App Analysis */}
+                 <div className="bg-gray-50 p-6 rounded-lg">
+                   <h3 className="text-xl font-bold mb-4">Financial Analysis</h3>
+                   <div className="space-y-4">
+                     <div className="bg-white p-4 rounded border">
+                       <h4 className="font-bold text-lg">Monthly Performance</h4>
+                       <div className="grid grid-cols-2 gap-4 mt-2">
+                         {chronologicalMonths.slice(1).map(month => {
+                           const monthBookings = bookings.filter(b => format(parseISO(b.checkIn), 'MMMM') === month);
+                           const monthIncome = monthBookings.reduce((sum, b) => {
+                             const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
+                             return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
+                           }, 0);
+                           const monthExpenses = expenses.filter(e => format(parseISO(e.date), 'MMMM') === month).reduce((sum, e) => sum + e.amount, 0);
+                           const profit = monthIncome - monthExpenses;
+                           
+                           if (monthIncome > 0 || monthExpenses > 0) {
+                             return (
+                               <div key={month} className="text-sm">
+                                 <strong>{month}:</strong><br/>
+                                 Income: {monthIncome.toFixed(0)}฿<br/>
+                                 Expenses: {monthExpenses.toFixed(0)}฿<br/>
+                                 <span className={profit >= 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
+                                   Profit: {profit.toFixed(0)}฿
+                                 </span>
+                               </div>
+                             );
+                           }
+                           return null;
+                         })}
+                       </div>
+                     </div>
+                     
+                     <div className="bg-white p-4 rounded border">
+                       <h4 className="font-bold text-lg">Unit Performance</h4>
+                       <div className="max-h-48 overflow-y-auto">
+                         {units.map(unit => {
+                           const unitBookings = bookings.filter(b => b.unitId === unit.id);
+                           const unitIncome = unitBookings.reduce((sum, b) => {
+                             const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
+                             return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
+                           }, 0);
+                           const unitExpenses = expenses.filter(e => e.unitId === unit.id).reduce((sum, e) => sum + e.amount, 0);
+                           
+                           if (unitIncome > 0 || unitExpenses > 0) {
+                             return (
+                               <div key={unit.id} className="flex justify-between text-sm py-1 border-b">
+                                 <span className="font-medium">{unit.name}:</span>
+                                 <span>Income: {unitIncome.toFixed(0)}฿ | Expenses: {unitExpenses.toFixed(0)}฿ | 
+                                   <span className={unitIncome - unitExpenses >= 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
+                                     Net: {(unitIncome - unitExpenses).toFixed(0)}฿
+                                   </span>
+                                 </span>
+                               </div>
+                             );
+                           }
+                           return null;
+                         })}
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           )}
+           
+           {activeTab === 'clients' && (
+             <div className="bg-white p-6 rounded-lg shadow-md">
+               <h2 className="text-2xl font-bold mb-4 text-gray-800">Client Database</h2>
+               
+               {/* Client List */}
+               <div className="mb-6">
+                 <div className="flex justify-between items-center mb-4">
+                   <h3 className="text-xl font-bold">All Clients</h3>
+                   <button 
+                     onClick={() => {
+                       const clientData = [];
+                       // Get unique clients from bookings
+                       const uniqueClients = bookings.reduce((acc, booking) => {
+                         const clientKey = `${booking.firstName}_${booking.lastName}_${booking.email || booking.phone}`;
+                         if (!acc[clientKey]) {
+                           const clientBookings = bookings.filter(b => 
+                             b.firstName === booking.firstName && 
+                             b.lastName === booking.lastName &&
+                             (b.email === booking.email || b.phone === booking.phone)
+                           );
+                           const totalSpent = clientBookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0);
+                           const totalOwed = clientBookings.reduce((sum, b) => sum + getAmountDue(b), 0);
+                           
+                           acc[clientKey] = {
+                             'First Name': booking.firstName,
+                             'Last Name': booking.lastName,
+                             'Email': booking.email,
+                             'Phone': booking.phone,
+                             'WhatsApp': booking.whatsapp,
+                             'Instagram': booking.instagram,
+                             'Line': booking.line,
+                             'Facebook': booking.facebook,
+                             'Preferred Contact': booking.preferredContact,
+                             'Total Bookings': clientBookings.length,
+                             'Total Spent': totalSpent,
+                             'Amount Owed': totalOwed,
+                             'Last Stay': clientBookings.sort((a, b) => parseISO(b.checkIn) - parseISO(a.checkIn))[0].checkIn,
+                             'Source': booking.source
+                           };
+                         }
+                         return acc;
+                       }, {});
+                       
+                       const ws = XLSX.utils.json_to_sheet(Object.values(uniqueClients));
+                       const wb = XLSX.utils.book_new();
+                       XLSX.utils.book_append_sheet(wb, ws, "Client Database");
+                       XLSX.writeFile(wb, `client_database_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+                       handleShowAlert('Client database exported!');
+                     }}
+                     className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+                   >
+                     📥 Export Client Database
+                   </button>
+                 </div>
+                 
+                 <div className="overflow-x-auto">
+                   <table className="w-full border-collapse border border-gray-300">
+                     <thead>
+                       <tr className="bg-gray-100">
+                         <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Contact</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Bookings</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Total Spent</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Amount Owed</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Last Stay</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Source</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {(() => {
+                         // Get unique clients
+                         const uniqueClients = bookings.reduce((acc, booking) => {
+                           const clientKey = `${booking.firstName}_${booking.lastName}_${booking.email || booking.phone}`;
+                           if (!acc[clientKey]) {
+                             const clientBookings = bookings.filter(b => 
+                               b.firstName === booking.firstName && 
+                               b.lastName === booking.lastName &&
+                               (b.email === booking.email || b.phone === booking.phone)
+                             );
+                             const totalSpent = clientBookings.reduce((sum, b) => sum + getAmountPaid(b.payments), 0);
+                             const totalOwed = clientBookings.reduce((sum, b) => sum + getAmountDue(b), 0);
+                             
+                             acc[clientKey] = {
+                               firstName: booking.firstName,
+                               lastName: booking.lastName,
+                               contact: booking[booking.preferredContact.toLowerCase()] || booking.phone || booking.email,
+                               preferredContact: booking.preferredContact,
+                               bookings: clientBookings.length,
+                               totalSpent: totalSpent,
+                               amountOwed: totalOwed,
+                               lastStay: clientBookings.sort((a, b) => parseISO(b.checkIn) - parseISO(a.checkIn))[0].checkIn,
+                               source: booking.source
+                             };
+                           }
+                           return acc;
+                         }, {});
+                         
+                         return Object.values(uniqueClients).map((client, index) => (
+                           <tr key={index} className="hover:bg-gray-50">
+                             <td className="border border-gray-300 px-4 py-2">{client.firstName} {client.lastName}</td>
+                             <td className="border border-gray-300 px-4 py-2">
+                               <div>
+                                 <strong>{client.preferredContact}:</strong> {client.contact}
+                               </div>
+                             </td>
+                             <td className="border border-gray-300 px-4 py-2 text-center">{client.bookings}</td>
+                             <td className="border border-gray-300 px-4 py-2 text-right">{client.totalSpent.toFixed(0)}฿</td>
+                             <td className="border border-gray-300 px-4 py-2 text-right">
+                               <span className={client.amountOwed > 2 ? 'text-red-600 font-bold' : 'text-green-600'}>
+                                 {client.amountOwed.toFixed(0)}฿
+                               </span>
+                             </td>
+                             <td className="border border-gray-300 px-4 py-2">{format(parseISO(client.lastStay), 'MMM d, yyyy')}</td>
+                             <td className="border border-gray-300 px-4 py-2 capitalize">{client.source}</td>
+                           </tr>
+                         ));
+                       })()}
+                     </tbody>
+                   </table>
+                 </div>
+               </div>
+             </div>
+           )}
         </div>
       </div>
       
