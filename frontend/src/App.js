@@ -1490,7 +1490,13 @@ function App() {
                      <thead>
                        <tr className="bg-gray-100">
                          <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
-                         <th className="border border-gray-300 px-4 py-2 text-left">Contact</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Phone</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Email</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">WhatsApp</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">LINE</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Instagram</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Facebook</th>
+                         <th className="border border-gray-300 px-4 py-2 text-left">Preferred</th>
                          <th className="border border-gray-300 px-4 py-2 text-left">Bookings</th>
                          <th className="border border-gray-300 px-4 py-2 text-left">Total Spent</th>
                          <th className="border border-gray-300 px-4 py-2 text-left">Amount Owed</th>
@@ -1515,7 +1521,12 @@ function App() {
                              acc[clientKey] = {
                                firstName: booking.firstName,
                                lastName: booking.lastName,
-                               contact: booking[booking.preferredContact.toLowerCase()] || booking.phone || booking.email,
+                               phone: booking.phone,
+                               email: booking.email,
+                               whatsapp: booking.whatsapp,
+                               line: booking.line,
+                               instagram: booking.instagram,
+                               facebook: booking.facebook,
                                preferredContact: booking.preferredContact,
                                bookings: clientBookings.length,
                                totalSpent: totalSpent,
@@ -1530,10 +1541,14 @@ function App() {
                          return Object.values(uniqueClients).map((client, index) => (
                            <tr key={index} className="hover:bg-gray-50">
                              <td className="border border-gray-300 px-4 py-2">{client.firstName} {client.lastName}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.phone || '-'}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.email || '-'}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.whatsapp || '-'}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.line || '-'}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.instagram || '-'}</td>
+                             <td className="border border-gray-300 px-4 py-2">{client.facebook || '-'}</td>
                              <td className="border border-gray-300 px-4 py-2">
-                               <div>
-                                 <strong>{client.preferredContact}:</strong> {client.contact}
-                               </div>
+                               <strong>{client.preferredContact}</strong>
                              </td>
                              <td className="border border-gray-300 px-4 py-2 text-center">{client.bookings}</td>
                              <td className="border border-gray-300 px-4 py-2 text-right">{client.totalSpent.toFixed(0)}฿</td>
