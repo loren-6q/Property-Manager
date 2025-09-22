@@ -1502,8 +1502,23 @@ function App() {
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Whatsapp" checked={modalData.preferredContact === "Whatsapp"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Whatsapp:</span>
+                  <span className="text-sm font-medium">WhatsApp:</span>
                   <input type="text" className="input-field w-20ch" name="whatsapp" value={modalData.whatsapp ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, whatsapp: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Line" checked={modalData.preferredContact === "Line"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">LINE:</span>
+                  <input type="text" className="input-field w-20ch" name="line" value={modalData.line ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, line: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Instagram" checked={modalData.preferredContact === "Instagram"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">Instagram:</span>
+                  <input type="text" className="input-field w-20ch" name="instagram" value={modalData.instagram ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, instagram: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="preferredContact" value="Facebook" checked={modalData.preferredContact === "Facebook"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
+                  <span className="text-sm font-medium">Facebook:</span>
+                  <input type="text" className="input-field w-20ch" name="facebook" value={modalData.facebook ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, facebook: e.target.value }))} />
                 </label>
               </div>
               
