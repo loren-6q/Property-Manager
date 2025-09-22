@@ -1051,8 +1051,8 @@ function App() {
                                  <h4 className="font-bold">Rental Periods:</h4>
                                  {booking.lineItems.map((item, index) => (
                                     <div key={index} className="flex justify-start space-x-2">
-                                        <div>{format(parseISO(item.startDate), 'dLLLyy').toUpperCase()} -</div>
-                                        <div>{format(parseISO(item.endDate), 'dLLLyy').toUpperCase()}</div>
+                                        <div>{format(typeof item.startDate === 'string' ? parseISO(item.startDate) : new Date(item.startDate), 'dLLLyy').toUpperCase()} -</div>
+                                        <div>{format(typeof item.endDate === 'string' ? parseISO(item.endDate) : new Date(item.endDate), 'dLLLyy').toUpperCase()}</div>
                                     </div>
                                    ))}
                              </div>
