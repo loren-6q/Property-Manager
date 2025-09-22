@@ -1305,6 +1305,71 @@ function App() {
               </svg>
             </button>
             <h2 className="text-2xl font-bold mb-4 text-gray-800">Upcoming Reminders</h2>
+            <div className="mb-4">
+              <h3 className="font-bold text-gray-700 mb-2">Add New Reminder</h3>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="date"
+                  className="input-field"
+                  value={newReminderData.date ?? ''}
+                  onChange={(e) => setNewReminderData(prev => ({ ...prev, date: e.target.value }))}
+                />
+                <select
+                  className="input-field"
+                  value={newReminderData.unitId ?? ''}
+                  onChange={(e) => setNewReminderData(prev => ({ ...prev, unitId: e.target.value }))}
+                >
+                  <option value="">N/A</option>
+                  {units.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                </select>
+                <select
+                  className="input-field"
+                  value={newReminderData.type}
+                  onChange={(e) => setNewReminderData(prev => ({ ...prev, type: e.target.value }))}
+                >
+                  <option value="checkin">Check-in</option>
+                  <option value="checkout">Checkout</option>
+                  <option value="rent">Rent Due</option>
+                  <option value="vacant">Vacant</option>
+                  <option value="other">Other</option>
+                </select>
+                <textarea
+                   placeholder="Notes (e.g., Arthur, 10000฿)"
+                   className="input-field h-16"
+                   value={newReminderData.note ?? ''}
+                   onChange={(e) => setNewReminderData(prev => ({ ...prev, note: e.target.value }))}
+                 />
+              </div>
+              <button onClick={() => {
+                if (!newReminderData.date) {
+                  handleShowAlert("Date is required for a reminder.");
+                  return;
+                }
+                const unitName = newReminderData.unitId ? units.find(u => u.id === newReminderData.unitId)?.name : 'N/A';
+                let reminderText;
+                if (newReminderData.type === 'checkin') {
+                  reminderText = `${unitName}: Check-in ${newReminderData.note || ''}`;
+                } else if (newReminderData.type === 'checkout') {
+                  reminderText = `${unitName}: Checkout ${newReminderData.note || ''}`;
+                } else if (newReminderData.type === 'rent') {
+                  reminderText = `${unitName}: Rent due ${newReminderData.note || ''}`;
+                } else if (newReminderData.type === 'vacant') {
+                  reminderText = `${unitName}: Vacant ${newReminderData.note || ''}`;
+                } else { // other
+                  reminderText = `${unitName}: ${newReminderData.note || 'Custom reminder'}`;
+                }
+                setReminders(prev => [...prev, { 
+                  date: parseISO(newReminderData.date), 
+                  text: reminderText, 
+                  type: newReminderData.type, 
+                  unitId: newReminderData.unitId || '', 
+                  note: newReminderData.note || ''
+                }]);
+                setNewReminderData({ date: format(today, 'yyyy-MM-dd'), unitId: '', note: '', type: 'checkin' });
+              }} className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors">
+                Add Reminder
+              </button>
+            </div>
             <div className="space-y-2">
               <h3 className="font-bold text-gray-700">All Reminders</h3>
               {reminders.length > 0 ? (
