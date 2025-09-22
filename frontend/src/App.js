@@ -1376,11 +1376,22 @@ function App() {
                 reminders
                   .sort((a, b) => a.date - b.date)
                   .map((r, index) => (
-                    <div key={index} className={`flex justify-between items-center p-3 rounded-md border text-sm ${r.type === 'checkin' ? 'bg-blue-100 border-blue-500' : r.type === 'checkout' ? 'bg-red-100 border-red-500' : r.type === 'rent' ? 'bg-green-100 border-green-500' : r.type === 'vacant' ? 'bg-yellow-100 border-yellow-500' : 'bg-gray-100 border-gray-500'}`}>
+                    <div key={index} className={`flex justify-between items-center p-3 rounded-md border text-sm ${
+                      r.type === 'checkin' ? 'bg-blue-100 border-blue-500' : 
+                      r.type === 'checkout' ? 'bg-red-100 border-red-500' : 
+                      r.type === 'rent' ? 'bg-green-100 border-green-500' : 
+                      r.type === 'vacant' ? 'bg-yellow-100 border-yellow-500' : 
+                      'bg-gray-100 border-gray-500'
+                    }`}>
                       <div>
                         <p className="font-bold">{format(r.date, 'MMM d, yyyy')}</p>
                         <p>{r.text}</p>
                       </div>
+                      <button onClick={() => {
+                        setReminders(prev => prev.filter((_, i) => i !== index));
+                      }} className="text-red-500 hover:text-red-700 transition-colors">
+                        ❌
+                      </button>
                     </div>
                   ))
               ) : (
