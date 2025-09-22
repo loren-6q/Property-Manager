@@ -1372,11 +1372,31 @@ function App() {
                        <h4 className="font-bold text-lg">Monthly Performance</h4>
                        <div className="grid grid-cols-2 gap-4 mt-2">
                          {chronologicalMonths.slice(1).map(month => {
-                           const monthBookings = bookings.filter(b => format(parseISO(b.checkIn), 'MMMM') === month);
-                           const monthIncome = monthBookings.reduce((sum, b) => {
-                             const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
-                             return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
-                           }, 0);
+                           // Calculate income based on rental periods, not payment dates
+                           let monthIncome = 0;
+                           bookings.forEach(booking => {
+                             const checkInDate = parseISO(booking.checkIn);
+                             const checkoutDate = parseISO(booking.checkout);
+                             
+                             // Check if this month overlaps with the booking period
+                             const monthStart = new Date(2025, chronologicalMonths.indexOf(month) - 1, 1);
+                             const monthEnd = new Date(2025, chronologicalMonths.indexOf(month), 0);
+                             
+                             if (checkInDate <= monthEnd && checkoutDate >= monthStart) {
+                               // Calculate what portion of the rental applies to this month
+                               const overlapStart = checkInDate > monthStart ? checkInDate : monthStart;
+                               const overlapEnd = checkoutDate < monthEnd ? checkoutDate : monthEnd;
+                               const overlapDays = differenceInDays(addDays(overlapEnd, 1), overlapStart);
+                               const totalBookingDays = differenceInDays(checkoutDate, checkInDate);
+                               
+                               if (totalBookingDays > 0) {
+                                 const totalRent = getRentCost(booking);
+                                 const monthlyPortion = (overlapDays / totalBookingDays) * totalRent;
+                                 monthIncome += monthlyPortion;
+                               }
+                             }
+                           });
+                           
                            const monthExpenses = expenses.filter(e => format(parseISO(e.date), 'MMMM') === month).reduce((sum, e) => sum + e.amount, 0);
                            const profit = monthIncome - monthExpenses;
                            
