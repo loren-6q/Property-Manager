@@ -143,50 +143,55 @@ const getDisplayRate = (booking) => {
 const calculateLineItems = (startDateStr, endDateStr, dailyRate, weeklyRate, monthlyRate) => {
   let lineItems = [];
   if (!startDateStr || !endDateStr) return lineItems;
-  let current = parseISO(startDateStr);
-  const end = parseISO(endDateStr);
+  
+  try {
+    let current = typeof startDateStr === 'string' ? parseISO(startDateStr) : new Date(startDateStr);
+    const end = typeof endDateStr === 'string' ? parseISO(endDateStr) : new Date(endDateStr);
 
-  if (!isAfter(end, current)) {
-    return lineItems;
-  }
-
-  while (isBefore(current, end)) {
-    let itemStartDate = current;
-    let itemEndDate;
-    let cost;
-    let type;
-    let nextDate;
-
-    const endOfMonth = subDays(addMonths(itemStartDate, 1), 1);
-    if (isAfter(endOfMonth, end) || isSameDay(endOfMonth, end)) {
-      const remainingDays = differenceInDays(end, itemStartDate);
-      const numWeeks = Math.floor(remainingDays / 7);
-      const remDays = remainingDays % 7;
-
-      if (numWeeks > 0) {
-        itemEndDate = subDays(addWeeks(itemStartDate, numWeeks), 1);
-        cost = numWeeks * weeklyRate;
-        type = "week";
-        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: weeklyRate });
-        current = addWeeks(itemStartDate, numWeeks);
-      }
-      if (remDays > 0) {
-        itemStartDate = current;
-        itemEndDate = end;
-        cost = remDays * dailyRate;
-        type = "day";
-        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: dailyRate });
-        current = end;
-      }
-      break;
-    } else {
-      itemEndDate = endOfMonth;
-      cost = monthlyRate;
-      type = "month";
-      nextDate = addDays(endOfMonth, 1);
-      lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: monthlyRate });
-      current = nextDate;
+    if (!isAfter(end, current)) {
+      return lineItems;
     }
+
+    while (isBefore(current, end)) {
+      let itemStartDate = current;
+      let itemEndDate;
+      let cost;
+      let type;
+      let nextDate;
+
+      const endOfMonth = subDays(addMonths(itemStartDate, 1), 1);
+      if (isAfter(endOfMonth, end) || isSameDay(endOfMonth, end)) {
+        const remainingDays = differenceInDays(end, itemStartDate);
+        const numWeeks = Math.floor(remainingDays / 7);
+        const remDays = remainingDays % 7;
+
+        if (numWeeks > 0) {
+          itemEndDate = subDays(addWeeks(itemStartDate, numWeeks), 1);
+          cost = numWeeks * weeklyRate;
+          type = "week";
+          lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: weeklyRate });
+          current = addWeeks(itemStartDate, numWeeks);
+        }
+        if (remDays > 0) {
+          itemStartDate = current;
+          itemEndDate = end;
+          cost = remDays * dailyRate;
+          type = "day";
+          lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: dailyRate });
+          current = end;
+        }
+        break;
+      } else {
+        itemEndDate = endOfMonth;
+        cost = monthlyRate;
+        type = "month";
+        nextDate = addDays(endOfMonth, 1);
+        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: monthlyRate });
+        current = nextDate;
+      }
+    }
+  } catch (error) {
+    console.error('Error calculating line items:', error);
   }
   return lineItems;
 };
