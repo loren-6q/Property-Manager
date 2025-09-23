@@ -1344,18 +1344,29 @@ function App() {
                            reportData.push({
                              'Property': property?.name || 'Unknown',
                              'Unit': unit?.name || 'Unknown',
-                             'Guest Name': `${booking.firstName} ${booking.lastName}`.trim(),
+                             'Name': `${booking.firstName} ${booking.lastName}`.trim(),
+                             'First Name': booking.firstName,
+                             'Last Name': booking.lastName,
                              'Check-in': booking.checkIn,
                              'Checkout': booking.checkout,
                              'Source': booking.source,
                              'Total Cost': getTotalCost(booking),
+                             'Total Price': booking.totalPrice || 0,
+                             'Commission': booking.commission || 0,
                              'Amount Paid': getAmountPaid(booking.payments),
                              'Amount Due': getAmountDue(booking),
                              'Deposit': booking.deposit,
+                             'Monthly Rate': booking.monthlyRate,
+                             'Weekly Rate': booking.weeklyRate,
+                             'Daily Rate': booking.dailyRate,
                              'Status': booking.status,
-                             'Contact': booking.preferredContact,
                              'Phone': booking.phone,
                              'Email': booking.email,
+                             'WhatsApp': booking.whatsapp,
+                             'LINE': booking.line,
+                             'Instagram': booking.instagram,
+                             'Facebook': booking.facebook,
+                             'Preferred Contact': booking.preferredContact,
                              'Notes': booking.notes
                            });
                          });
@@ -1366,9 +1377,62 @@ function App() {
                          XLSX.writeFile(wb, `bookings_report_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
                          handleShowAlert('Bookings report exported to Excel!');
                        }}
-                       className="w-full bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600"
+                       className="w-full bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 mb-2"
                      >
-                       📊 Export Bookings Report
+                       📊 Export Bookings Excel
+                     </button>
+                     
+                     <button 
+                       onClick={() => {
+                         const reportData = [];
+                         bookings.forEach(booking => {
+                           const unit = units.find(u => u.id === booking.unitId);
+                           const property = properties.find(p => p.id === unit?.propertyId);
+                           reportData.push({
+                             'Property': property?.name || 'Unknown',
+                             'Unit': unit?.name || 'Unknown',
+                             'Name': `${booking.firstName} ${booking.lastName}`.trim(),
+                             'First Name': booking.firstName,
+                             'Last Name': booking.lastName,
+                             'Check-in': booking.checkIn,
+                             'Checkout': booking.checkout,
+                             'Source': booking.source,
+                             'Total Cost': getTotalCost(booking),
+                             'Total Price': booking.totalPrice || 0,
+                             'Commission': booking.commission || 0,
+                             'Amount Paid': getAmountPaid(booking.payments),
+                             'Amount Due': getAmountDue(booking),
+                             'Deposit': booking.deposit,
+                             'Monthly Rate': booking.monthlyRate,
+                             'Weekly Rate': booking.weeklyRate,
+                             'Daily Rate': booking.dailyRate,
+                             'Status': booking.status,
+                             'Phone': booking.phone,
+                             'Email': booking.email,
+                             'WhatsApp': booking.whatsapp,
+                             'LINE': booking.line,
+                             'Instagram': booking.instagram,
+                             'Facebook': booking.facebook,
+                             'Preferred Contact': booking.preferredContact,
+                             'Notes': booking.notes
+                           });
+                         });
+                         
+                         const csv = Papa.unparse(reportData);
+                         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                         const link = document.createElement('a');
+                         const url = URL.createObjectURL(blob);
+                         link.setAttribute('href', url);
+                         link.setAttribute('download', `bookings_backup_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+                         link.style.visibility = 'hidden';
+                         document.body.appendChild(link);
+                         link.click();
+                         document.body.removeChild(link);
+                         handleShowAlert('Bookings backup exported to CSV!');
+                       }}
+                       className="w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+                     >
+                       💾 Export Bookings CSV (Backup)
                      </button>
                      
                      <button 
