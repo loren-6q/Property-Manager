@@ -430,23 +430,97 @@ function App() {
     if (!file) {
       return;
     }
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const importedData = JSON.parse(event.target.result);
-        if (importedData && importedData.properties && importedData.units) {
-          await axios.post(`${API}/data/import`, importedData);
-          await fetchData();
-          handleShowAlert('Data loaded successfully!');
-        } else {
-          handleShowAlert('Invalid data format in file.');
+
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    
+    if (fileExtension === 'csv') {
+      // Handle CSV import
+      Papa.parse(file, {
+        header: true,
+        complete: async (results) => {
+          try {
+            const csvData = results.data.filter(row => row.Name && row.Name.trim() !== '');
+            
+            // Convert CSV to booking format
+            const importedBookings = csvData.map(row => ({
+              id: `book-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              unitId: units.find(u => u.name === row['Unit'])?.id || 'unit-1',
+              name: row['Name'] || '',
+              firstName: row['First Name'] || row['Name'] || '',
+              lastName: row['Last Name'] || '',
+              source: row['Source'] || 'direct',
+              totalPrice: parseFloat(row['Total Price']) || 0,
+              commission: parseFloat(row['Commission']) || 0,
+              checkIn: row['Check-in'] || format(new Date(), 'yyyy-MM-dd'),
+              checkout: row['Checkout'] || format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
+              deposit: parseFloat(row['Deposit']) || 0,
+              monthlyRate: parseFloat(row['Monthly Rate']) || 9000,
+              weeklyRate: parseFloat(row['Weekly Rate']) || 3000,
+              dailyRate: parseFloat(row['Daily Rate']) || 500,
+              monthlyWaterCharge: 200,
+              electricRate: 8,
+              phone: row['Phone'] || '',
+              email: row['Email'] || '',
+              whatsapp: row['WhatsApp'] || '',
+              line: row['LINE'] || '',
+              instagram: row['Instagram'] || '',
+              facebook: row['Facebook'] || '',
+              preferredContact: row['Preferred Contact'] || 'Phone',
+              meterReadings: [],
+              payments: [],
+              notes: row['Notes'] || '',
+              status: row['Status'] || 'future',
+              lineItems: []
+            }));
+
+            // Calculate line items for each booking
+            importedBookings.forEach(booking => {
+              booking.lineItems = calculateLineItems(
+                booking.checkIn, 
+                booking.checkout, 
+                booking.dailyRate, 
+                booking.weeklyRate, 
+                booking.monthlyRate
+              );
+            });
+
+            // Save to backend
+            for (const booking of importedBookings) {
+              await axios.post(`${API}/bookings`, booking);
+            }
+
+            await fetchData();
+            handleShowAlert(`Successfully imported ${importedBookings.length} bookings from CSV!`);
+          } catch (error) {
+            console.error("Error importing CSV:", error);
+            handleShowAlert('Error importing CSV. Please check the format and try again.');
+          }
+        },
+        error: (error) => {
+          console.error("CSV parsing error:", error);
+          handleShowAlert('Error parsing CSV file. Please ensure it\'s a valid CSV format.');
         }
-      } catch (e) {
-        console.error("Error loading data:", e);
-        handleShowAlert('Error loading data. Please ensure the file is a valid JSON export.');
-      }
-    };
-    reader.readAsText(file);
+      });
+    } else {
+      // Handle JSON import (existing code)
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (importedData && importedData.properties && importedData.units) {
+            await axios.post(`${API}/data/import`, importedData);
+            await fetchData();
+            handleShowAlert('Data loaded successfully!');
+          } else {
+            handleShowAlert('Invalid data format in file.');
+          }
+        } catch (e) {
+          console.error("Error loading data:", e);
+          handleShowAlert('Error loading data. Please ensure the file is a valid JSON export.');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
     
   const toggleFontSize = () => {
