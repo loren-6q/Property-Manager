@@ -894,9 +894,9 @@ function App() {
                      Export Data
                    </button>
                    <label htmlFor="load-file" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm cursor-pointer">
-                     Import Data
+                     Import Data (JSON/CSV)
                    </label>
-                   <input id="load-file" type="file" accept=".json" onChange={loadData} className="hidden"/>
+                   <input id="load-file" type="file" accept=".json,.csv" onChange={loadData} className="hidden"/>
                 </div>
                 <button
                   onClick={() => setIsPropertyModalOpen(true)}
