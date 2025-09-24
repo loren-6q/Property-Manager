@@ -1927,6 +1927,25 @@ function App() {
               </svg>
             </button>
             <h2 className="text-2xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
+            
+            {/* Unit Selection for Moving Bookings */}
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <label className="text-sm font-medium">Assigned Unit:</label>
+              <select
+                className="input-field"
+                value={modalData.unitId}
+                onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
+              >
+                {units.map(unit => {
+                  const property = properties.find(p => p.id === unit.propertyId);
+                  return (
+                    <option key={unit.id} value={unit.id}>
+                      {property?.name} - {unit.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
             <div className="mt-6 flex flex-col gap-4">
               {/* Guest & Contact Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
