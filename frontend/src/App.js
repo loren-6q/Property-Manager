@@ -1968,9 +1968,9 @@ function App() {
                 })}
               </select>
             </div>
-            <div className="mt-6 flex flex-col gap-4">
+            <div className="mt-4 flex flex-col gap-3">
               {/* Guest & Contact Info */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium">First Name:</label>
                   <input type="text" className="input-field w-20ch" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
