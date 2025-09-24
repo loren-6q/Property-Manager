@@ -219,3 +219,5 @@
 ## agent_communication:
   - agent: "main"
     message: "Starting systematic fixes for reported UI/UX issues. Beginning with critical z-index problem for delete confirmation modal, then checkout logic, followed by compactness improvements."
+  - agent: "main"
+    message: "PROGRESS UPDATE: Completed most major fixes - 1) Increased confirmation modal z-index to 70, 2) Changed page title to 'Property Manager', 3) Made unit selection compact, 4) Changed delete buttons from ❌ to × with smaller text, 5) Fixed deposit checkboxes to stack vertically, 6) Changed label from 'Collected & Refunded' to 'Refunded', 7) Adjusted flexible monthly rate to -3 to +2 days, 8) Fixed checkout logic, 9) Made overall modal more compact for mobile. Ready for testing."
