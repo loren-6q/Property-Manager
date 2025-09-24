@@ -2154,7 +2154,7 @@ function App() {
                 <div className="bg-white p-4 rounded-lg shadow-inner">
                   <h3 className="font-bold mb-2">Payments</h3>
                   <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
-                    {modalData.payments?.map((p, idx) => (
+                    {modalData.payments?.sort((a, b) => new Date(a.date) - new Date(b.date)).map((p, idx) => (
                       <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
                         <input
                           type="date"
@@ -2190,6 +2190,15 @@ function App() {
                           }}
                           className="w-16 text-xs text-right border rounded-md"
                         />฿
+                        <button
+                          onClick={() => {
+                            const newPayments = modalData.payments.filter((_, i) => i !== idx);
+                            setModalData(prev => ({ ...prev, payments: newPayments }));
+                          }}
+                          className="text-red-500 hover:text-red-700 ml-1"
+                        >
+                          ❌
+                        </button>
                       </li>
                     ))}
                   </ul>
