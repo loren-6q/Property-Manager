@@ -101,3 +101,121 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+## user_problem_statement: "Fix several UI/UX issues reported by user: 1) Delete booking confirmation modal appearing behind booking modal (z-index issue), 2) Make move bookings modal more compact, 3) Make delete buttons for meter readings and payments smaller, 4) Fix checkout window logic - units not disappearing 2 days after checkout, 5) Stack deposit checkboxes vertically and change label to 'Refunded', 6) Adjust flexible monthly rate calculation from (-2 to +1 days) to (-3 to +2 days), 7) Make everything more compact for mobile use, 8) Change page title to 'Property Manager'"
+
+## frontend:
+  - task: "Fix delete confirmation modal z-index"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reports delete booking confirmation modal appearing behind main booking modal"
+  
+  - task: "Make move bookings modal more compact"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Unit selection dropdown makes booking modal too space-consuming"
+  
+  - task: "Resize delete buttons (X) for payments and meter readings"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Delete buttons (❌) are too large, need to be smaller"
+  
+  - task: "Fix checkout window logic (2 days after checkout)"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Units not disappearing from Units tab 2 days after checkout - example: Sept 24th checkout not hiding on that date"
+  
+  - task: "Fix deposit tracking layout and labeling"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Checkboxes should be stacked vertically, change 'Collected & Refunded' label to just 'Refunded'"
+  
+  - task: "Adjust flexible monthly rate calculation"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Change flexible monthly rate from (-2 to +1 days) to (-3 to +2 days)"
+  
+  - task: "Make UI more compact for mobile"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "General request to make everything more compact for mobile use"
+  
+  - task: "Change page title to Property Manager"
+    implemented: false
+    working: false
+    file: "/app/frontend/public/index.html"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "Change page title from 'Emergent | Fullstack App' to 'Property Manager'"
+
+## metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+## test_plan:
+  current_focus:
+    - "Fix delete confirmation modal z-index"
+    - "Fix checkout window logic (2 days after checkout)"
+    - "Make move bookings modal more compact"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+## agent_communication:
+  - agent: "main"
+    message: "Starting systematic fixes for reported UI/UX issues. Beginning with critical z-index problem for delete confirmation modal, then checkout logic, followed by compactness improvements."
