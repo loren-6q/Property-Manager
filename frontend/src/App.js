@@ -60,7 +60,8 @@ const getTotalCost = (booking) => {
   const totalRent = getRentCost(booking);
   const totalElectric = getMeterCost(booking.meterReadings, booking.electricRate);
   const totalWater = getWaterCost(booking);
-  return (booking.deposit || 0) + totalRent + totalElectric + totalWater;
+  // Don't include deposit in total cost - it's separate
+  return totalRent + totalElectric + totalWater;
 };
 
 const getAmountPaid = (payments) => payments.reduce((sum, p) => sum + p.amount, 0);
