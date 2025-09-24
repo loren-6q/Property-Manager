@@ -2321,9 +2321,9 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1"
+                          className="text-red-500 hover:text-red-700 ml-1 text-xs"
                         >
-                          ❌
+                          ×
                         </button>
                       </li>
                     ))}
