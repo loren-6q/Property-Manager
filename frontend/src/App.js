@@ -2417,8 +2417,13 @@ function App() {
                       <span className="font-semibold">{getWaterCost(modalData).toFixed(0)}฿</span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-gray-600">Deposit:</span>
-                      <span className="font-semibold">{modalData.deposit.toFixed(0)}฿</span>
+                      <span className="text-gray-600">Deposit Status:</span>
+                      <span className="font-semibold">
+                        {modalData.depositCollected ? 
+                          (modalData.depositRefunded ? '✅ Collected & Refunded' : '✅ Collected') : 
+                          '❌ Not Collected'
+                        } ({modalData.deposit.toFixed(0)}฿)
+                      </span>
                     </li>
                     <li className="flex justify-between font-bold pt-2 mt-2 border-t">
                       <span>Total Cost:</span>
