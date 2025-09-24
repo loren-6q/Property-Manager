@@ -182,7 +182,21 @@ const calculateLineItems = (startDateStr, endDateStr, dailyRate, weeklyRate, mon
       let nextDate;
 
       const endOfMonth = subDays(addMonths(itemStartDate, 1), 1);
-      if (isAfter(endOfMonth, end) || isSameDay(endOfMonth, end)) {
+      
+      // Check if this period qualifies for monthly rate (-2 to +1 days flexibility)
+      const daysInPeriod = differenceInDays(isAfter(endOfMonth, end) ? end : addDays(endOfMonth, 1), itemStartDate);
+      const daysInMonth = differenceInDays(addDays(endOfMonth, 1), itemStartDate);
+      const daysDifference = Math.abs(daysInPeriod - daysInMonth);
+      
+      if (daysDifference <= 3 && daysInPeriod >= (daysInMonth - 2)) {
+        // Use monthly rate if within -2 to +1 days of full month
+        itemEndDate = isAfter(endOfMonth, end) ? end : endOfMonth;
+        cost = monthlyRate;
+        type = "month";
+        nextDate = addDays(itemEndDate, 1);
+        lineItems.push({ startDate: itemStartDate, endDate: itemEndDate, cost, type, rate: monthlyRate });
+        current = nextDate;
+      } else if (isAfter(endOfMonth, end) || isSameDay(endOfMonth, end)) {
         const remainingDays = differenceInDays(end, itemStartDate);
         const numWeeks = Math.floor(remainingDays / 7);
         const remDays = remainingDays % 7;
