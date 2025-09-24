@@ -1028,8 +1028,8 @@ function App() {
                                 {bookingElements}
                               </div>
                               <div className="absolute top-4 right-4 flex space-x-2">
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold mr-2">
-                                    ❌
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold mr-2 text-sm">
+                                    ×
                                   </button>
                                 <button
                                   onClick={() => handleOpenBookingModal(null, unit.id)}
