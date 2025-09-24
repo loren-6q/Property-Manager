@@ -2073,7 +2073,25 @@ function App() {
                 </div>
                 <div className="flex flex-col">
                   <label className="text-sm font-medium">Deposit (฿):</label>
-                  <input type="number" className="input-field w-20ch" name="deposit" value={modalData.deposit ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, deposit: Number(e.target.value) }))} />
+                  <div className="flex items-center gap-2">
+                    <input type="number" className="input-field w-20ch" name="deposit" value={modalData.deposit ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, deposit: Number(e.target.value) }))} />
+                    <label className="flex items-center gap-1 text-xs">
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.depositCollected || false}
+                        onChange={(e) => setModalData(prev => ({ ...prev, depositCollected: e.target.checked }))}
+                      />
+                      Collected
+                    </label>
+                    <label className="flex items-center gap-1 text-xs">
+                      <input 
+                        type="checkbox" 
+                        checked={modalData.depositRefunded || false}
+                        onChange={(e) => setModalData(prev => ({ ...prev, depositRefunded: e.target.checked }))}
+                      />
+                      Refunded
+                    </label>
+                  </div>
                 </div>
               </div>
               
