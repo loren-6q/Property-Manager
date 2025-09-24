@@ -111,7 +111,8 @@ const getDueNow = (booking) => {
     waterDueNow = numMonthsPassed * (booking.monthlyWaterCharge || 0);
     const electricDueNow = getMeterCost(booking.meterReadings, booking.electricRate);
 
-    const totalDue = (booking.deposit || 0) + rentDueNow + electricDueNow + waterDueNow;
+    // Don't include deposit in dues - it's separate
+    const totalDue = rentDueNow + electricDueNow + waterDueNow;
 
     return totalDue;
   } catch (error) {
