@@ -2252,7 +2252,7 @@ function App() {
                 <div className="bg-white p-4 rounded-lg shadow-inner">
                   <h3 className="font-bold mb-2">Meter Readings</h3>
                   <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
-                    {modalData.meterReadings?.map((m, idx) => (
+                    {modalData.meterReadings?.sort((a, b) => new Date(a.date) - new Date(b.date)).map((m, idx) => (
                       <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
                         <input
                           type="date"
@@ -2275,8 +2275,17 @@ function App() {
                           className="w-16 text-xs text-right border rounded-md"
                         />
                         <span className="text-xs font-semibold">
-                          {idx > 0 ? ((m.reading - modalData.meterReadings[idx-1].reading) * (modalData.electricRate ?? meterRate)).toFixed(0) : 0}฿
+                          {idx > 0 ? ((m.reading - modalData.meterReadings.sort((a, b) => new Date(a.date) - new Date(b.date))[idx-1].reading) * (modalData.electricRate ?? meterRate)).toFixed(0) : 0}฿
                         </span>
+                        <button
+                          onClick={() => {
+                            const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
+                            setModalData(prev => ({ ...prev, meterReadings: newReadings }));
+                          }}
+                          className="text-red-500 hover:text-red-700 ml-1"
+                        >
+                          ❌
+                        </button>
                       </li>
                     ))}
                   </ul>
