@@ -2422,7 +2422,7 @@ function App() {
                       <span className="text-gray-600">Deposit Status:</span>
                       <span className="font-semibold">
                         {modalData.depositCollected ? 
-                          (modalData.depositRefunded ? '✅ Collected & Refunded' : '✅ Collected') : 
+                          (modalData.depositRefunded ? '✅ Refunded' : '✅ Collected') : 
                           '❌ Not Collected'
                         } ({modalData.deposit.toFixed(0)}฿)
                       </span>
