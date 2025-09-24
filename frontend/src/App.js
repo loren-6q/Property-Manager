@@ -1916,17 +1916,17 @@ function App() {
       {isConfirmModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[70]">
           <div className="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full relative">
-            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-            <p className="mb-6">{confirmMessage}</p>
+            <h3 className="text-lg font-bold mb-3">Confirm Deletion</h3>
+            <p className="mb-4 text-sm">{confirmMessage}</p>
             <div className="flex justify-end gap-2">
               <button
-                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-400"
+                className="bg-gray-300 text-gray-800 px-3 py-1.5 text-sm rounded-full hover:bg-gray-400"
                 onClick={() => setIsConfirmModalOpen(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                className="bg-red-500 text-white px-3 py-1.5 text-sm rounded-full hover:bg-red-600"
                 onClick={() => confirmAction()}
               >
                 Delete
