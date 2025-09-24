@@ -1950,10 +1950,10 @@ function App() {
             <h2 className="text-2xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
             
             {/* Unit Selection for Moving Bookings */}
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <label className="text-sm font-medium">Assigned Unit:</label>
+            <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+              <label className="text-xs font-medium">Unit:</label>
               <select
-                className="input-field"
+                className="input-field text-sm mt-1"
                 value={modalData.unitId}
                 onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
               >
