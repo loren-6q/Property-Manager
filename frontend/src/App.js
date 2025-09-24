@@ -2115,7 +2115,7 @@ function App() {
               </div>
               
               {/* Rates */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium">Monthly Rate (฿):</label>
                   <input type="number" className="input-field w-20ch" name="monthlyRate" value={modalData.monthlyRate ?? 0} onChange={(e) => {
