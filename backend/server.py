@@ -93,6 +93,8 @@ class Booking(BaseModel):
     checkIn: str
     checkout: str
     deposit: float = 0
+    depositCollected: bool = False
+    depositRefunded: bool = False
     monthlyRate: float
     weeklyRate: float
     dailyRate: float
