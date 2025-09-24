@@ -937,8 +937,13 @@ function App() {
                     {expandedProperties.has(property.id) && (
                       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         {units.filter(u => u.propertyId === property.id).map(unit => {
-                          // Only show current and future bookings in Units tab
-                          const currentAndFutureBookings = bookings.filter(b => b.unitId === unit.id && isAfter(parseISO(b.checkout), today)).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
+                          // Only show current and future bookings, plus checkouts from last 2 days in Units tab
+                          const twoDaysAgo = subDays(today, 2);
+                          const currentAndFutureBookings = bookings.filter(b => 
+                            b.unitId === unit.id && 
+                            (isAfter(parseISO(b.checkout), today) || 
+                             (isAfter(parseISO(b.checkout), twoDaysAgo) && b.status === 'checkedOut'))
+                          ).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
                           const status = getUnitStatus(unit.id);
                           const currentBooking = currentAndFutureBookings.find(b => isBefore(parseISO(b.checkIn), addDays(today, 1)) && isAfter(parseISO(b.checkout), today));
                           let statusColorClass = STATUS_COLORS[status];
