@@ -2126,7 +2126,7 @@ function App() {
             </div>
             <div className="mt-3">
               {/* Main 2-Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 {/* LEFT COLUMN - Customer Details */}
                 <div className="bg-gray-50 p-3 rounded">
