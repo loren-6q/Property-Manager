@@ -269,6 +269,7 @@ function App() {
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmMessage, setConfirmMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [newContactDetail, setNewContactDetail] = useState({ type: 'Phone', value: '' });
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
