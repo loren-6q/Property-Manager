@@ -1940,8 +1940,8 @@ function App() {
       
       {/* Booking Modal */}
       {isModalOpen && modalData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 z-50">
-          <div className="bg-white p-4 md:p-6 rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 z-50">
+          <div className="bg-white p-3 md:p-4 rounded-lg shadow-2xl max-w-4xl w-full max-h-[98vh] overflow-y-auto relative text-sm">
             <button
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
               onClick={handleCloseModal}
