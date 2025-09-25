@@ -2443,7 +2443,6 @@ function App() {
                         >
                           <option value="Rent">Rent</option>
                           <option value="Utility">Utility</option>
-                          <option value="Deposit">Deposit</option>
                           <option value="Other">Other</option>
                         </select>
                         <input
