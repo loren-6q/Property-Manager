@@ -754,19 +754,9 @@ function App() {
     const newProperties = [...properties];
     [newProperties[propertyIndex], newProperties[newIndex]] = [newProperties[newIndex], newProperties[propertyIndex]];
     
-    // Update the order field for both properties
-    newProperties[propertyIndex].order = propertyIndex;
-    newProperties[newIndex].order = newIndex;
-
-    try {
-      await axios.put(`${API}/properties/${newProperties[propertyIndex].id}`, { order: propertyIndex });
-      await axios.put(`${API}/properties/${newProperties[newIndex].id}`, { order: newIndex });
-      await fetchData();
-      handleShowAlert('Property order updated successfully!');
-    } catch (error) {
-      console.error('Error updating property order:', error);
-      handleShowAlert('Failed to update property order.');
-    }
+    // Update state directly for immediate UI feedback
+    setProperties(newProperties);
+    handleShowAlert('Property order updated!');
   };
 
   const moveUnit = async (unitId, direction) => {
@@ -779,23 +769,16 @@ function App() {
     const newIndex = direction === 'up' ? unitIndex - 1 : unitIndex + 1;
     if (newIndex < 0 || newIndex >= unitsInProperty.length) return;
 
-    // Create new array with swapped positions
-    const newUnits = [...unitsInProperty];
-    [newUnits[unitIndex], newUnits[newIndex]] = [newUnits[newIndex], newUnits[unitIndex]];
+    // Reorder the units in the main units array
+    const newUnits = [...units];
+    const globalIndexA = newUnits.findIndex(u => u.id === unitsInProperty[unitIndex].id);
+    const globalIndexB = newUnits.findIndex(u => u.id === unitsInProperty[newIndex].id);
     
-    // Update the order field for both units
-    newUnits[unitIndex].order = unitIndex;
-    newUnits[newIndex].order = newIndex;
-
-    try {
-      await axios.put(`${API}/units/${newUnits[unitIndex].id}`, { order: unitIndex });
-      await axios.put(`${API}/units/${newUnits[newIndex].id}`, { order: newIndex });
-      await fetchData();
-      handleShowAlert('Unit order updated successfully!');
-    } catch (error) {
-      console.error('Error updating unit order:', error);
-      handleShowAlert('Failed to update unit order.');
-    }
+    [newUnits[globalIndexA], newUnits[globalIndexB]] = [newUnits[globalIndexB], newUnits[globalIndexA]];
+    
+    // Update state directly for immediate UI feedback
+    setUnits(newUnits);
+    handleShowAlert('Unit order updated!');
   };
 
   const handleDeleteUnit = async (unitId) => {
