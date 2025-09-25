@@ -357,8 +357,8 @@
 ## test_plan:
   current_focus: []
   stuck_tasks: []
-  test_all: true
-  test_priority: "comprehensive_complete"
+  test_all: false
+  test_priority: "all_phases_complete"
 
 ## agent_communication:
   - agent: "main"
