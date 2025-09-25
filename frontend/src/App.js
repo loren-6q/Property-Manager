@@ -1158,13 +1158,21 @@ function App() {
                               <div className="mt-2" style={{ fontSize: isFontSizeIncreased ? '1em' : '0.875em' }}>
                                 {bookingElements}
                               </div>
-                              <div className="absolute top-4 right-4 flex space-x-2">
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold mr-2 text-sm">
+                              <div className="absolute top-4 right-4 flex items-center space-x-1">
+                                  <div className="flex flex-col">
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'up'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === 0}>
+                                      ↑
+                                    </button>
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'down'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === units.filter(u => u.propertyId === unit.propertyId).length - 1}>
+                                      ↓
+                                    </button>
+                                  </div>
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
                                     ×
                                   </button>
                                 <button
                                   onClick={() => handleOpenBookingModal(null, unit.id)}
-                                  className="px-2 py-1 bg-white text-blue-500 rounded-full shadow-sm hover:bg-gray-100 transition-colors"
+                                  className="px-2 py-1 bg-white text-blue-500 rounded-full shadow-sm hover:bg-gray-100 transition-colors text-xs"
                                 >
                                   New Booking
                                 </button>
