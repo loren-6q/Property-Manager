@@ -2436,6 +2436,12 @@ function App() {
                     >
                       Add
                     </button>
+                    <button
+                      className="bg-green-500 text-white px-2 py-1 text-xs rounded-full hover:bg-green-600 ml-2"
+                      onClick={handleAutoFillMeterReading}
+                    >
+                      Auto Fill
+                    </button>
                   </div>
                   <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
