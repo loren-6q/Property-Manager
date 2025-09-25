@@ -2480,7 +2480,7 @@ function App() {
                             const newPayments = modalData.payments.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
                         >
                           ×
                         </button>
@@ -2566,7 +2566,7 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
                         >
                           ×
                         </button>
