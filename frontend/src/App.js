@@ -2281,6 +2281,35 @@ function App() {
                     }} />
                   </div>
                 </div>
+                
+                {/* Status Section */}
+                <div className="mt-3">
+                  <label className="text-xs font-medium mb-2 block">Status:</label>
+                  <div className="flex items-center gap-4 text-xs">
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="checkedIn" checked={modalData.status === "checkedIn"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span>Checked In</span>
+                    </label>
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="checkedOut" checked={modalData.status === "checkedOut"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span>Checkout</span>
+                    </label>
+                    <label className="flex items-center gap-1">
+                      <input type="radio" name="status" value="future" checked={modalData.status === "future"} onChange={(e) => {
+                        setModalData(prev => ({ ...prev, status: e.target.value }));
+                      }} />
+                      <span>None</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Deposit Section */}
+              <div className="bg-white p-3 rounded border">
                 <div className="flex flex-col">
                   <label className="text-xs font-medium">Deposit (฿):</label>
                   <div className="flex flex-col gap-2">
