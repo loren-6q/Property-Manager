@@ -2104,13 +2104,10 @@ function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h2 className="text-lg md:text-xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
-            
-            {/* Unit Selection for Moving Bookings */}
-            <div className="mt-2 p-2 bg-gray-50 rounded">
-              <label className="text-xs font-medium">Unit:</label>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg md:text-xl font-bold text-gray-800">Booking Details - </span>
               <select
-                className="input-field text-xs mt-1 h-8"
+                className="text-lg md:text-xl font-bold text-gray-800 bg-transparent border-0 outline-none cursor-pointer"
                 value={modalData.unitId}
                 onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
               >
