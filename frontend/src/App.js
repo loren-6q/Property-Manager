@@ -1022,7 +1022,7 @@ function App() {
                   {/* Color Legend */}
                   <div className="bg-gray-50 p-3 rounded-lg text-xs">
                     <div className="font-semibold mb-2">🎨 Color & Style Guide:</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
                       <div className="flex items-center gap-1">
                         <div className="bg-green-200 border-green-500 border rounded px-2 py-1 text-xs">Current Guest</div>
                       </div>
