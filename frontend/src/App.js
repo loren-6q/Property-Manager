@@ -1082,7 +1082,7 @@ function App() {
                           <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-xs ml-2">
                             ✏️
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
                             ×
                           </button>
                         </div>
@@ -1185,7 +1185,7 @@ function App() {
                                       ↓
                                     </button>
                                   </div>
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
                                     ×
                                   </button>
                                 <button
@@ -2058,7 +2058,7 @@ function App() {
                       </div>
                       <button onClick={() => {
                         setReminders(prev => prev.filter((_, i) => i !== index));
-                      }} className="text-red-500 hover:text-red-700 transition-colors text-base">
+                      }} className="text-red-500 hover:text-red-700 transition-colors text-lg">
                         ×
                       </button>
                     </div>
@@ -2192,7 +2192,7 @@ function App() {
                               const newContacts = modalData.contactDetails.filter((_, i) => i !== idx);
                               setModalData(prev => ({ ...prev, contactDetails: newContacts }));
                             }}
-                            className="text-red-500 hover:text-red-700 text-base"
+                            className="text-red-500 hover:text-red-700 text-lg"
                           >
                             ×
                           </button>
@@ -2480,7 +2480,7 @@ function App() {
                             const newPayments = modalData.payments.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
                         >
                           ×
                         </button>
@@ -2566,7 +2566,7 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
                         >
                           ×
                         </button>
