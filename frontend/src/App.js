@@ -1972,7 +1972,7 @@ function App() {
             </div>
             <div className="mt-3 flex flex-col gap-2">
               {/* Guest & Contact Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="flex flex-col">
                   <label className="text-sm font-medium">First Name:</label>
                   <input type="text" className="input-field w-20ch" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
