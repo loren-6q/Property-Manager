@@ -815,11 +815,13 @@ function App() {
         body { font-family: 'Roboto Condensed', sans-serif; }
         .input-field {
           border: 1px solid #d1d5db;
-          border-radius: 0.375rem;
-          padding: 0.5rem;
+          border-radius: 0.25rem;
+          padding: 0.25rem 0.5rem;
           width: 100%;
           transition: all 0.2s ease-in-out;
           outline: none;
+          font-size: 0.875rem;
+          height: 2rem;
         }
         .input-field:focus {
           border-color: #60a5fa;
