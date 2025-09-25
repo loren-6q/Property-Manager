@@ -1950,13 +1950,13 @@ function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h2 className="text-2xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">Booking Details - {units.find(u => u.id === modalData.unitId)?.name}</h2>
             
             {/* Unit Selection for Moving Bookings */}
-            <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+            <div className="mt-2 p-2 bg-gray-50 rounded">
               <label className="text-xs font-medium">Unit:</label>
               <select
-                className="input-field text-sm mt-1"
+                className="input-field text-xs mt-1 h-8"
                 value={modalData.unitId}
                 onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
               >
@@ -1970,7 +1970,7 @@ function App() {
                 })}
               </select>
             </div>
-            <div className="mt-4 flex flex-col gap-3">
+            <div className="mt-3 flex flex-col gap-2">
               {/* Guest & Contact Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 <div className="flex flex-col">
