@@ -2491,9 +2491,9 @@ function App() {
                 <textarea className="input-field h-24" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
               </div>
             </div>
-            <div className="flex flex-wrap justify-end gap-2 mt-4">
+            <div className="flex flex-wrap justify-end gap-2 mt-3">
               <button 
-                className="bg-red-500 text-white px-4 py-2 text-sm rounded-full hover:bg-red-600" 
+                className="bg-red-500 text-white px-3 py-1.5 text-xs rounded-full hover:bg-red-600" 
                 onClick={() => {
                   setConfirmMessage('Are you sure you want to delete this booking? This cannot be undone.');
                   setConfirmAction(() => async () => {
@@ -2514,8 +2514,8 @@ function App() {
               >
                 Delete Booking
               </button>
-              <button className="bg-gray-300 text-gray-800 px-4 py-2 text-sm rounded-full hover:bg-gray-400" onClick={handleCloseModal}>Close</button>
-              <button className="bg-blue-500 text-white px-4 py-2 text-sm rounded-full hover:bg-blue-600" onClick={handleSaveModal}>Save Booking</button>
+              <button className="bg-gray-300 text-gray-800 px-3 py-1.5 text-xs rounded-full hover:bg-gray-400" onClick={handleCloseModal}>Close</button>
+              <button className="bg-blue-500 text-white px-3 py-1.5 text-xs rounded-full hover:bg-blue-600" onClick={handleSaveModal}>Save Booking</button>
             </div>
           </div>
         </div>
