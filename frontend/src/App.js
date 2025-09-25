@@ -2615,16 +2615,14 @@ function App() {
                       Auto Fill
                     </button>
                   </div>
-                  <div className="flex flex-col mt-4">
+                  <div className="flex gap-4 mt-4">
                       <label className="flex items-center gap-2">
                         <span className="text-xs font-medium">Electric (฿/kWh):</span>
-                        <input type="number" className="input-field w-15ch" name="electricRate" value={modalData.electricRate ?? meterRate} onChange={(e) => setModalData(prev => ({ ...prev, electricRate: Number(e.target.value) }))} />
+                        <input type="number" className="input-field w-20" name="electricRate" value={modalData.electricRate ?? meterRate} onChange={(e) => setModalData(prev => ({ ...prev, electricRate: Number(e.target.value) }))} />
                       </label>
-                  </div>
-                  <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
                             <span className="text-xs font-medium">Water (฿/Mo):</span>
-                            <input type="number" className="input-field w-20ch" name="monthlyWaterCharge" value={modalData.monthlyWaterCharge ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, monthlyWaterCharge: Number(e.target.value) }))} />
+                            <input type="number" className="input-field w-20" name="monthlyWaterCharge" value={modalData.monthlyWaterCharge ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, monthlyWaterCharge: Number(e.target.value) }))} />
                       </label>
                   </div>
                 </div>
