@@ -569,7 +569,7 @@ function App() {
     const currentBooking = allBookingsForUnit.find(b => isBefore(parseISO(b.checkIn), today) && isAfter(parseISO(b.checkout), today));
     const nextBooking = getNextCheckInDate(unitId, allBookingsForUnit);
     if (currentBooking) {
-      const amountDue = getDueNow(currentBooking) - getAmountPaid(currentBooking.payments);
+      const amountDue = getDueNow(currentBooking) - getRentPaid(currentBooking.payments);
       return amountDue > 2 ? 'occupiedOwes' : 'occupiedPaid';
     } else if (nextBooking) {
       return 'future';
