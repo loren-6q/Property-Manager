@@ -1300,7 +1300,8 @@ function App() {
                </div>
                
                <div className="flex flex-col">
-                 <div className="bg-gray-200 rounded-t-lg font-bold p-2 grid grid-cols-12 gap-2 text-xs border-b border-gray-300">
+                 <div className="overflow-x-auto">
+                 <div className="bg-gray-200 rounded-t-lg font-bold p-2 grid grid-cols-12 gap-2 text-xs border-b border-gray-300 min-w-max">
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('unit')}>Unit</div>
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('lastName')}>Last Name</div>
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('firstName')}>First Name</div>
