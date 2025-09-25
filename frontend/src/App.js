@@ -2058,7 +2058,7 @@ function App() {
                       </div>
                       <button onClick={() => {
                         setReminders(prev => prev.filter((_, i) => i !== index));
-                      }} className="text-red-500 hover:text-red-700 transition-colors text-base">
+                      }} className="text-red-500 hover:text-red-700 transition-colors text-lg">
                         ×
                       </button>
                     </div>
