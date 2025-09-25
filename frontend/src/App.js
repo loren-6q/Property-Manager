@@ -1184,7 +1184,7 @@ function App() {
                                       ↓
                                     </button>
                                   </div>
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-xs">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
                                     ×
                                   </button>
                                 <button
