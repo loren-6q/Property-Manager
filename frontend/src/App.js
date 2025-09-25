@@ -684,6 +684,38 @@ function App() {
     setIsConfirmModalOpen(true);
   };
 
+  const handleOpenPropertyEditModal = (property) => {
+    setEditingProperty({
+      ...property,
+      address: property.address || '',
+      wifiPassword: property.wifiPassword || '',
+      electricAccount: property.electricAccount || '',
+      waterAccount: property.waterAccount || '',
+      internetAccount: property.internetAccount || '',
+      rentAmount: property.rentAmount || '',
+      rentPaymentDetails: property.rentPaymentDetails || '',
+      contactInfo: property.contactInfo || '',
+      unitsCount: property.unitsCount || units.filter(u => u.propertyId === property.id).length,
+      description: property.description || ''
+    });
+    setIsPropertyEditModalOpen(true);
+  };
+
+  const handleSaveProperty = async () => {
+    try {
+      if (editingProperty.id) {
+        await axios.put(`${API}/properties/${editingProperty.id}`, editingProperty);
+        handleShowAlert('Property updated successfully!');
+      }
+      await fetchData();
+      setIsPropertyEditModalOpen(false);
+      setEditingProperty(null);
+    } catch (error) {
+      console.error('Error saving property:', error);
+      handleShowAlert('Failed to save property. Please try again.');
+    }
+  };
+
   const handleDeleteUnit = async (unitId) => {
     setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
     setConfirmAction(() => async () => {
