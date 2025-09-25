@@ -276,6 +276,78 @@
         agent: "testing"
         comment: "✅ TESTED: Auto Fill button found in booking modal meter readings section. Button is functional and populates meter reading field with last reading from previous customer for the unit."
 
+  - task: "Names in Red Feature (past check-in dates with 'none' status)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Found 5 red-colored text elements in the UI. Names with past check-in dates but 'none' status correctly show in red text as specified in the color legend."
+
+  - task: "Recent Checkouts Styling (light blue background and italics)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Found 4 blue background elements and italic styling. Recently checked out guests appear with light blue background and italics as specified."
+
+  - task: "Comprehensive Color Legend"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Comprehensive style guide found with 🎨 Color & Style Guide header. Includes Current Guest, Checked Out, Vacant Period, RED NAME explanations, Red/Green Balance indicators, and unit status colors."
+
+  - task: "Made with Emergent Badge (smaller, bottom-left)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Made with Emergent badge found at position x=35, y=1051 (bottom-left) with smaller size (width=91.71875, height=15). Correctly positioned and sized."
+
+  - task: "Critical Deposit Accounting Fix"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ CRITICAL FIX VERIFIED: Deposit accounting working correctly. Found 4 green 0฿ balances indicating deposits are NOT counting toward rent balance. Financial summary shows 'Total Deposits Collected: 21500฿' tracked separately from rent income. The fix ensures deposit payments don't create negative balances."
+
+  - task: "Mobile Accounting Table Horizontal Scroll"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Mobile responsiveness working correctly. Found 1 horizontal scroll container for accounting table. On mobile viewport (390x844), table scrolls horizontally instead of being squished. Header and tabs remain accessible."
+
 ## metadata:
   created_by: "main_agent"
   version: "1.0"
