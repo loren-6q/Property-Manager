@@ -2345,7 +2345,7 @@ function App() {
                 {/* LEFT - Standard Rates */}
                 <div className="bg-gray-50 p-3 rounded">
                   <h3 className="font-semibold text-sm mb-3">💰 Standard Rates:</h3>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-2">
                     <div className="flex flex-col">
                       <label className="text-xs font-medium">Monthly:</label>
                       <input type="number" className="input-field w-20" name="monthlyRate" value={modalData.monthlyRate ?? 0} onChange={(e) => {
