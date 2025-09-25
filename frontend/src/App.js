@@ -1340,7 +1340,7 @@ function App() {
                        
                        {expandedRow === booking.id && (
                          <div className="bg-gray-100 p-4 border-t border-gray-200">
-                             <div className="grid grid-cols-12 gap-2 text-xs text-blue-900">
+                             <div className="grid grid-cols-12 gap-2 text-xs text-blue-900 min-w-max">
                              <div className="col-start-4 col-span-2 text-left">
                                  <h4 className="font-bold">Rental Periods:</h4>
                                  {booking.lineItems.map((item, index) => (
