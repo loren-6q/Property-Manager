@@ -1082,7 +1082,7 @@ function App() {
                           <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-xs ml-2">
                             ✏️
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
                             ×
                           </button>
                         </div>
@@ -1185,7 +1185,7 @@ function App() {
                                       ↓
                                     </button>
                                   </div>
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
                                     ×
                                   </button>
                                 <button
@@ -2058,7 +2058,7 @@ function App() {
                       </div>
                       <button onClick={() => {
                         setReminders(prev => prev.filter((_, i) => i !== index));
-                      }} className="text-red-500 hover:text-red-700 transition-colors text-base">
+                      }} className="text-red-500 hover:text-red-700 transition-colors text-sm">
                         ×
                       </button>
                     </div>
@@ -2127,7 +2127,7 @@ function App() {
             <div className="mt-3 flex flex-col gap-3">
               {/* Customer Details Section */}
               <div className="bg-gray-50 p-3 rounded">
-                <h3 className="font-semibold text-base mb-2">👤 Customer Details</h3>
+                <h3 className="font-semibold text-sm mb-2">👤 Customer Details</h3>
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div className="flex flex-col">
                     <label className="text-xs font-medium">First Name:</label>
@@ -2187,7 +2187,7 @@ function App() {
                             const newContacts = modalData.contactDetails.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, contactDetails: newContacts }));
                           }}
-                          className="text-red-500 hover:text-red-700 text-base"
+                          className="text-red-500 hover:text-red-700 text-sm"
                         >
                           ×
                         </button>
@@ -2245,7 +2245,7 @@ function App() {
 
               {/* Booking Details Section */}
               <div className="bg-white p-3 rounded border">
-                <h3 className="font-semibold text-base mb-2">📅 Booking & Rate Details</h3>
+                <h3 className="font-semibold text-sm mb-2">📅 Booking & Rate Details</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col">
                     <label className="text-xs font-medium">Check-in:</label>
@@ -2460,7 +2460,7 @@ function App() {
                             const newPayments = modalData.payments.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-sm"
                         >
                           ×
                         </button>
@@ -2546,7 +2546,7 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-base"
+                          className="text-red-500 hover:text-red-700 ml-1 text-sm"
                         >
                           ×
                         </button>
