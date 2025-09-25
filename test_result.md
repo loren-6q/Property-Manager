@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-## user_problem_statement: "Fix several UI/UX issues reported by user: 1) Delete booking confirmation modal appearing behind booking modal (z-index issue), 2) Make move bookings modal more compact, 3) Make delete buttons for meter readings and payments smaller, 4) Fix checkout window logic - units not disappearing 2 days after checkout, 5) Stack deposit checkboxes vertically and change label to 'Refunded', 6) Adjust flexible monthly rate calculation from (-2 to +1 days) to (-3 to +2 days), 7) Make everything more compact for mobile use, 8) Change page title to 'Property Manager'"
+## user_problem_statement: "Additional fixes and features needed: 1) Recently checked out guests still not appearing in Units tab, 2) Deposit payments incorrectly counting in accounting causing negative balances, 3) Modals need to be much more compact for mobile, 4) Properties need edit modal with fields (name, address, wifi password, electric/water/internet account numbers, rent details, contact info, units count, description), 5) Drag & drop reordering for units and properties, 6) Auto meter reading button to populate first reading with previous customer's last reading"
 
 ## frontend:
   - task: "Fix delete confirmation modal z-index"
