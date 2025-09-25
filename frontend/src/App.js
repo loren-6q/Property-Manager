@@ -953,13 +953,13 @@ function App() {
                     {expandedProperties.has(property.id) && (
                       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                         {units.filter(u => u.propertyId === property.id).map(unit => {
-                          // Only show current and future bookings, plus checkouts within last 2 days in Units tab
+                          // Only show current and future bookings, plus checkouts within 2 days in Units tab
                           // If checkout was Sept 24th, it should show until Sept 26th (2 days after checkout)
                           const twoDaysAfterCheckout = (checkoutDate) => addDays(parseISO(checkoutDate), 2);
                           const currentAndFutureBookings = bookings.filter(b => 
                             b.unitId === unit.id && 
                             (isAfter(parseISO(b.checkout), today) || 
-                             (b.status === 'checkedOut' && !isAfter(today, twoDaysAfterCheckout(b.checkout))))
+                             (parseISO(b.checkout) <= today && isBefore(today, twoDaysAfterCheckout(b.checkout))))
                           ).sort((a,b) => parseISO(a.checkIn) - parseISO(b.checkIn));
                           const status = getUnitStatus(unit.id);
                           const currentBooking = currentAndFutureBookings.find(b => isBefore(parseISO(b.checkIn), addDays(today, 1)) && isAfter(parseISO(b.checkout), today));
