@@ -2192,7 +2192,7 @@ function App() {
                               const newContacts = modalData.contactDetails.filter((_, i) => i !== idx);
                               setModalData(prev => ({ ...prev, contactDetails: newContacts }));
                             }}
-                            className="text-red-500 hover:text-red-700 text-base"
+                            className="text-red-500 hover:text-red-700 text-lg"
                           >
                             ×
                           </button>
