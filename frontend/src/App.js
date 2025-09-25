@@ -1025,14 +1025,46 @@ function App() {
           {activeTab === 'units' && (
             <>
               <div className="flex justify-between items-center my-4">
-                <div>
-                   <button onClick={saveData} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm mr-2">
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                   <button onClick={saveData} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm">
                      Export Data
                    </button>
                    <label htmlFor="load-file" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm cursor-pointer">
                      Import Data (JSON/CSV)
                    </label>
                    <input id="load-file" type="file" accept=".json,.csv" onChange={loadData} className="hidden"/>
+                  </div>
+                  {/* Color Legend */}
+                  <div className="bg-gray-50 p-3 rounded-lg text-xs">
+                    <div className="font-semibold mb-2">🎨 Color & Style Guide:</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                      <div className="flex items-center gap-1">
+                        <div className="bg-green-200 border-green-500 border rounded px-2 py-1 text-xs">Current Guest</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="bg-blue-100 border-blue-300 border rounded px-2 py-1 text-xs italic">Checked Out</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="bg-yellow-100 border-yellow-500 border rounded px-2 py-1 text-xs">Vacant Period</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-red-600 font-semibold">RED NAME</span> <span>= Should Check In</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-red-700 font-bold">Red Balance</span> <span>= Owes Money</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-green-700 font-bold">Green Balance</span> <span>= All Paid</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="bg-red-100 border-red-700 border-l-8 px-2 py-1 text-xs">Unit: Owes Money</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="bg-green-100 border-green-700 border-l-8 px-2 py-1 text-xs">Unit: All Paid</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <button
                   onClick={() => setIsPropertyModalOpen(true)}
