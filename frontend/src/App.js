@@ -909,7 +909,7 @@ function App() {
   }
 
   return (
-    <div className={`bg-gray-100 min-h-screen p-8 pb-20 font-sans ${isFontSizeIncreased ? 'text-lg' : ''}`}>
+    <div className={`bg-gray-100 min-h-screen p-8 pb-20 font-sans ${isFontSizeIncreased ? 'text-base' : ''}`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
         body { font-family: 'Roboto Condensed', sans-serif; }
@@ -992,13 +992,13 @@ function App() {
         {/* Tabs */}
         <div className="flex justify-start space-x-2 mb-8">
           <button
-              className="px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full text-white shadow-lg bg-purple-600 hover:bg-purple-700"
+              className="px-6 py-2 text-base font-medium transition-all duration-300 rounded-full text-white shadow-lg bg-purple-600 hover:bg-purple-700"
               onClick={() => setIsRemindersModalOpen(true)}
               >Reminders</button>
           {['units', 'accounting', 'reports', 'clients'].map(tab => (
             <button
               key={tab}
-              className={`px-6 py-2 text-lg font-medium transition-all duration-300 rounded-full ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-blue-600'}`}
+              className={`px-6 py-2 text-base font-medium transition-all duration-300 rounded-full ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-blue-600'}`}
               onClick={() => setActiveTab(tab)}
             >{tab.charAt(0).toUpperCase() + tab.slice(1)}</button>
           ))}
@@ -1082,7 +1082,7 @@ function App() {
                           <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-xs ml-2">
                             ✏️
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
                             ×
                           </button>
                         </div>
@@ -1185,7 +1185,7 @@ function App() {
                                       ↓
                                     </button>
                                   </div>
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-base">
                                     ×
                                   </button>
                                 <button
@@ -1496,7 +1496,7 @@ function App() {
                          return sum + depositPayments.reduce((pSum, p) => pSum + p.amount, 0);
                        }, 0).toFixed(0)}฿</span></p>
                        <p>Total Expenses: <span className="font-semibold">{expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(0)}฿</span></p>
-                       <p className="mt-2 font-bold text-lg">Net Income: <span className="text-green-700">{(bookings.reduce((sum, b) => {
+                       <p className="mt-2 font-bold text-base">Net Income: <span className="text-green-700">{(bookings.reduce((sum, b) => {
                          const incomePayments = b.payments.filter(p => p.category !== 'Deposit');
                          return sum + incomePayments.reduce((pSum, p) => pSum + p.amount, 0);
                        }, 0) - expenses.reduce((sum, e) => sum + e.amount, 0)).toFixed(0)}฿</span></p>
@@ -1689,7 +1689,7 @@ function App() {
                    <h3 className="text-xl font-bold mb-4">Financial Analysis</h3>
                    <div className="space-y-4">
                      <div className="bg-white p-4 rounded border">
-                       <h4 className="font-bold text-lg">Monthly Performance</h4>
+                       <h4 className="font-bold text-base">Monthly Performance</h4>
                        <div className="grid grid-cols-2 gap-4 mt-2">
                          {chronologicalMonths.slice(1).map(month => {
                            // Calculate income based on rental periods, not payment dates
@@ -1738,7 +1738,7 @@ function App() {
                      </div>
                      
                      <div className="bg-white p-4 rounded border">
-                       <h4 className="font-bold text-lg">Unit Performance</h4>
+                       <h4 className="font-bold text-base">Unit Performance</h4>
                        <div className="max-h-48 overflow-y-auto">
                          {units.map(unit => {
                            const unitBookings = bookings.filter(b => b.unitId === unit.id);
@@ -2058,7 +2058,7 @@ function App() {
                       </div>
                       <button onClick={() => {
                         setReminders(prev => prev.filter((_, i) => i !== index));
-                      }} className="text-red-500 hover:text-red-700 transition-colors text-lg">
+                      }} className="text-red-500 hover:text-red-700 transition-colors text-base">
                         ×
                       </button>
                     </div>
@@ -2075,7 +2075,7 @@ function App() {
       {isConfirmModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[70]">
           <div className="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full relative">
-            <h3 className="text-lg font-bold mb-3">Confirm Deletion</h3>
+            <h3 className="text-base font-bold mb-3">Confirm Deletion</h3>
             <p className="mb-4 text-xs">{confirmMessage}</p>
             <div className="flex justify-end gap-2">
               <button
@@ -2108,9 +2108,9 @@ function App() {
               </svg>
             </button>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg md:text-xl font-bold text-gray-800">Booking Details - </span>
+              <span className="text-base md:text-xl font-bold text-gray-800">Booking Details - </span>
               <select
-                className="text-lg md:text-xl font-bold text-gray-800 bg-transparent border-0 outline-none cursor-pointer"
+                className="text-base md:text-xl font-bold text-gray-800 bg-transparent border-0 outline-none cursor-pointer"
                 value={modalData.unitId}
                 onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
               >
@@ -2192,7 +2192,7 @@ function App() {
                               const newContacts = modalData.contactDetails.filter((_, i) => i !== idx);
                               setModalData(prev => ({ ...prev, contactDetails: newContacts }));
                             }}
-                            className="text-red-500 hover:text-red-700 text-lg"
+                            className="text-red-500 hover:text-red-700 text-base"
                           >
                             ×
                           </button>
@@ -2480,7 +2480,7 @@ function App() {
                             const newPayments = modalData.payments.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
+                          className="text-red-500 hover:text-red-700 ml-1 text-base"
                         >
                           ×
                         </button>
@@ -2566,7 +2566,7 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-lg"
+                          className="text-red-500 hover:text-red-700 ml-1 text-base"
                         >
                           ×
                         </button>
@@ -2854,7 +2854,7 @@ function App() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Edit Property: {editingProperty.name ?? ''}</h2>
+            <h2 className="text-base font-bold text-gray-800 mb-4">Edit Property: {editingProperty.name ?? ''}</h2>
             <div className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col">
