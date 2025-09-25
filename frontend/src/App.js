@@ -1155,7 +1155,7 @@ function App() {
                                   }
                                 }
                                 bookingElements.push(
-                                    <p key={b.id} className={`my-1.5 flex justify-between items-center ${b.status === 'checkedOut' && (getAmountDue(b) > 2) ? 'font-bold italic text-red-500' : ''} ${isCurrent ? 'bg-green-200 border-green-500 border rounded-full my-2 px-2 py-1' : (b.status === 'checkedOut' || b.status === 'checkout') ? 'bg-blue-100 border-blue-300 border rounded-full my-2 px-2 py-1 italic' : ''}`} style={{ fontSize: 'inherit' }}>
+                                    <p key={b.id} className={`my-1.5 flex justify-between items-center ${b.status === 'checkedOut' && (getAmountDue(b) > 2) ? 'font-bold italic text-red-500' : ''} ${isCurrent ? 'bg-green-200 border-green-500 border rounded-full my-2 px-2 py-1' : (b.status === 'checkedOut' || b.status === 'checkout' || (parseISO(b.checkout) < today)) ? 'bg-blue-100 border-blue-300 border rounded-full my-2 px-2 py-1 italic' : ''}`} style={{ fontSize: 'inherit' }}>
                                         <span className={`font-semibold uppercase cursor-pointer ${
                                           !isCurrent && parseISO(b.checkIn) <= today && (b.status === 'none' || !b.status) ? 'text-red-600' : ''
                                         }`} onClick={() => handleOpenBookingModal(b)}>{b.name}</span>
