@@ -2490,7 +2490,6 @@ function App() {
                     <select id="newPaymentCategory" className="input-field mr-2 w-24">
                           <option value="Rent">Rent</option>
                           <option value="Utility">Utility</option>
-                          <option value="Deposit">Deposit</option>
                           <option value="Other">Other</option>
                     </select>
                     <button
