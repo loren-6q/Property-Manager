@@ -1139,7 +1139,7 @@ function App() {
                                   }
                                 }
                                 bookingElements.push(
-                                    <p key={b.id} className={`my-1.5 flex justify-between items-center ${b.status === 'checkedOut' && (getAmountDue(b) > 2) ? 'font-bold italic text-red-500' : ''} ${isCurrent ? 'bg-green-200 border-green-500 border rounded-full my-2 px-2 py-1' : ''}`} style={{ fontSize: 'inherit' }}>
+                                    <p key={b.id} className={`my-1.5 flex justify-between items-center ${b.status === 'checkedOut' && (getAmountDue(b) > 2) ? 'font-bold italic text-red-500' : ''} ${isCurrent ? 'bg-green-200 border-green-500 border rounded-full my-2 px-2 py-1' : b.status === 'checkedOut' ? 'bg-blue-100 border-blue-300 border rounded-full my-2 px-2 py-1 italic' : ''}`} style={{ fontSize: 'inherit' }}>
                                         <span className="font-semibold uppercase cursor-pointer" onClick={() => handleOpenBookingModal(b)}>{b.name}</span>
                                         <span className="text-gray-500 text-sm">
                                             ({format(parseISO(b.checkIn), 'dMMM').toUpperCase()}-{format(parseISO(b.checkout), 'dMMMyy').toUpperCase()}) {getDisplayRate(b)} | Balance:
