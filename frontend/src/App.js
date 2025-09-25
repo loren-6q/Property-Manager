@@ -976,7 +976,7 @@ function App() {
                           
                           if (shouldBeCheckedIn) {
                             statusColorClass = 'bg-red-200 border-red-700'; // RED for should be checked in but isn't
-                          } else if(currentBooking && (getDueNow(currentBooking) - getAmountPaid(currentBooking.payments)) > 2) {
+                          } else if(currentBooking && (getDueNow(currentBooking) - getRentPaid(currentBooking.payments)) > 2) {
                               statusColorClass = STATUS_COLORS['occupiedOwes']
                           } else if (currentBooking) {
                               statusColorClass = STATUS_COLORS['occupiedPaid']
