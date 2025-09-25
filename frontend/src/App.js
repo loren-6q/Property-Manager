@@ -2435,12 +2435,16 @@ function App() {
                       <span>{getTotalCost(modalData).toFixed(0)}฿</span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-gray-600">Amount Paid:</span>
+                      <span className="text-gray-600">Rent Paid:</span>
+                      <span className="font-semibold">{getRentPaid(modalData.payments).toFixed(0)}฿</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-gray-600">Total Payments:</span>
                       <span className="font-semibold">{getAmountPaid(modalData.payments).toFixed(0)}฿</span>
                     </li>
                     <li className="flex justify-between font-bold">
-                      <span>Total Due:</span>
-                      <span>{getAmountDue(modalData).toFixed(0)}฿</span>
+                      <span>Balance Due:</span>
+                      <span className={getAmountDue(modalData) > 2 ? 'text-red-700' : 'text-green-700'}>{getAmountDue(modalData).toFixed(0)}฿</span>
                     </li>
                   </ul>
                 </div>
