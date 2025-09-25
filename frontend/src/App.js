@@ -1319,7 +1319,7 @@ function App() {
                  <div className="divide-y divide-gray-200">
                    {filteredAndSortedBookings().map(booking => (
                      <div key={booking.id}>
-                       <div className="grid grid-cols-12 gap-2 items-center text-xs py-2 hover:bg-gray-50">
+                       <div className="grid grid-cols-12 gap-2 items-center text-xs py-2 hover:bg-gray-50 min-w-max">
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenUnitModal(units.find(u => u.id === booking.unitId))}>{units.find(u => u.id === booking.unitId)?.name}</div>
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.lastName}</div>
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.firstName}</div>
