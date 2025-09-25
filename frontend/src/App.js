@@ -263,6 +263,8 @@ function App() {
   const [accountingPeriod, setAccountingPeriod] = useState({ year: format(today, 'yyyy'), month: 'all' });
   const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
   const [newProperty, setNewProperty] = useState({ name: '' });
+  const [isPropertyEditModalOpen, setIsPropertyEditModalOpen] = useState(false);
+  const [editingProperty, setEditingProperty] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmMessage, setConfirmMessage] = useState('');
