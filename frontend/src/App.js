@@ -940,17 +940,17 @@ function App() {
         .w-20ch { width: 20ch; }
         .w-15ch { width: 15ch; }
         .w-10ch { width: 10ch; }
-        .text-sm {
+        .text-xs {
           font-size: ${isFontSizeIncreased ? '1.125rem' : '0.875rem'};
         }
-        .text-sm {
+        .text-xs {
           font-size: ${isFontSizeIncreased ? '0.875rem' : '0.75rem'};
         }
-        .text-sm-base {
+        .text-xs-base {
           font-size: ${isFontSizeIncreased ? '1.125rem' : '0.875rem'};
           line-height: 1.25rem;
         }
-        .text-sm-sm {
+        .text-xs-sm {
           font-size: ${isFontSizeIncreased ? '0.875rem' : '0.75rem'};
           line-height: 1rem;
         }
@@ -1010,26 +1010,26 @@ function App() {
               <div className="flex justify-between items-center my-4">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
-                   <button onClick={saveData} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm">
+                   <button onClick={saveData} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-xs">
                      Export Data
                    </button>
-                   <label htmlFor="load-file" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-sm cursor-pointer">
+                   <label htmlFor="load-file" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition-colors text-xs cursor-pointer">
                      Import Data (JSON/CSV)
                    </label>
                    <input id="load-file" type="file" accept=".json,.csv" onChange={loadData} className="hidden"/>
                   </div>
                   {/* Color Legend */}
-                  <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                  <div className="bg-gray-50 p-3 rounded-lg text-xs">
                     <div className="font-semibold mb-2">🎨 Color & Style Guide:</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                       <div className="flex items-center gap-1">
-                        <div className="bg-green-200 border-green-500 border rounded px-2 py-1 text-sm">Current Guest</div>
+                        <div className="bg-green-200 border-green-500 border rounded px-2 py-1 text-xs">Current Guest</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="bg-blue-100 border-blue-300 border rounded px-2 py-1 text-sm italic">Checked Out</div>
+                        <div className="bg-blue-100 border-blue-300 border rounded px-2 py-1 text-xs italic">Checked Out</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="bg-yellow-100 border-yellow-500 border rounded px-2 py-1 text-sm">Vacant Period</div>
+                        <div className="bg-yellow-100 border-yellow-500 border rounded px-2 py-1 text-xs">Vacant Period</div>
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-red-600 font-semibold">RED NAME</span> <span>= Should Check In</span>
@@ -1041,17 +1041,17 @@ function App() {
                         <span className="text-green-700 font-bold">Green Balance</span> <span>= All Paid</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="bg-red-100 border-red-700 border-l-8 px-2 py-1 text-sm">Unit: Owes Money</div>
+                        <div className="bg-red-100 border-red-700 border-l-8 px-2 py-1 text-xs">Unit: Owes Money</div>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="bg-green-100 border-green-700 border-l-8 px-2 py-1 text-sm">Unit: All Paid</div>
+                        <div className="bg-green-100 border-green-700 border-l-8 px-2 py-1 text-xs">Unit: All Paid</div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsPropertyModalOpen(true)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors text-sm"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors text-xs"
                 >
                   New Property
                 </button>
@@ -1072,16 +1072,16 @@ function App() {
                       <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-gray-800">{property.name}</h2>
                         <div className="flex items-center gap-1">
-                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'up'); }} className="text-gray-500 hover:text-gray-700 text-sm" disabled={properties.findIndex(p => p.id === property.id) === 0}>
+                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'up'); }} className="text-gray-500 hover:text-gray-700 text-xs" disabled={properties.findIndex(p => p.id === property.id) === 0}>
                             ↑
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'down'); }} className="text-gray-500 hover:text-gray-700 text-sm" disabled={properties.findIndex(p => p.id === property.id) === properties.length - 1}>
+                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'down'); }} className="text-gray-500 hover:text-gray-700 text-xs" disabled={properties.findIndex(p => p.id === property.id) === properties.length - 1}>
                             ↓
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-sm ml-2">
+                          <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-xs ml-2">
                             ✏️
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-xs">
                             ×
                           </button>
                         </div>
@@ -1133,7 +1133,7 @@ function App() {
                             const vacantDaysStart = differenceInDays(firstCheckIn, today);
                             if (isAfter(firstCheckIn, today) && vacantDaysStart > 0) {
                               bookingElements.push(
-                                <div key={`vacant-start`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-sm py-1">
+                                <div key={`vacant-start`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-xs py-1">
                                   VACANT {format(today, 'dMMM').toUpperCase()} - {format(subDays(firstCheckIn, 1), 'dMMM').toUpperCase()} ({vacantDaysStart} days)
                                 </div>
                               );
@@ -1147,7 +1147,7 @@ function App() {
                                   const vacantDaysBetween = differenceInDays(checkInDate, parseISO(prevBooking.checkout));
                                   if (vacantDaysBetween > 0) {
                                     bookingElements.push(
-                                      <div key={`vacant-${prevBooking.id}`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-sm py-1">
+                                      <div key={`vacant-${prevBooking.id}`} className="bg-yellow-100 border-yellow-500 border rounded-full my-2 text-center text-xs py-1">
                                         VACANT {format(parseISO(prevBooking.checkout), 'dMMM').toUpperCase()} - {format(subDays(checkInDate, 1), 'dMMM').toUpperCase()} ({vacantDaysBetween} days)
                                       </div>
                                     );
@@ -1158,7 +1158,7 @@ function App() {
                                         <span className={`font-semibold uppercase cursor-pointer ${
                                           !isCurrent && parseISO(b.checkIn) <= today && (b.status === 'none' || !b.status) ? 'text-red-600' : ''
                                         }`} onClick={() => handleOpenBookingModal(b)}>{b.name}</span>
-                                        <span className="text-gray-500 text-sm">
+                                        <span className="text-gray-500 text-xs">
                                             ({format(parseISO(b.checkIn), 'dMMM').toUpperCase()}-{format(parseISO(b.checkout), 'dMMMyy').toUpperCase()}) {getDisplayRate(b)} | Balance:
                                             <span className={`font-bold ${balance > 2 ? 'text-red-700' : 'text-green-700'}`}>{balance.toFixed(0)}฿</span>
                                         </span>
@@ -1177,19 +1177,19 @@ function App() {
                               </div>
                               <div className="absolute top-4 right-4 flex items-center space-x-1">
                                   <div className="flex flex-col">
-                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'up'); }} className="text-gray-400 hover:text-gray-600 text-sm" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === 0}>
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'up'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === 0}>
                                       ↑
                                     </button>
-                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'down'); }} className="text-gray-400 hover:text-gray-600 text-sm" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === units.filter(u => u.propertyId === unit.propertyId).length - 1}>
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'down'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === units.filter(u => u.propertyId === unit.propertyId).length - 1}>
                                       ↓
                                     </button>
                                   </div>
-                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-xs">
                                     ×
                                   </button>
                                 <button
                                   onClick={() => handleOpenBookingModal(null, unit.id)}
-                                  className="px-2 py-1 bg-white text-blue-500 rounded-full shadow-sm hover:bg-gray-100 transition-colors text-sm"
+                                  className="px-2 py-1 bg-white text-blue-500 rounded-full shadow-sm hover:bg-gray-100 transition-colors text-xs"
                                 >
                                   New Booking
                                 </button>
@@ -1238,7 +1238,7 @@ function App() {
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-2xl font-bold mb-4 text-gray-800">Accounting Overview</h2>
               <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-4 text-xs">
                    <h3 className="font-bold">Filters:</h3>
                    <label className="flex items-center gap-2">
                      <span>Unit:</span>
@@ -1299,7 +1299,7 @@ function App() {
                </div>
                
                <div className="flex flex-col">
-                 <div className="bg-gray-200 rounded-t-lg font-bold p-2 grid grid-cols-12 gap-2 text-sm border-b border-gray-300">
+                 <div className="bg-gray-200 rounded-t-lg font-bold p-2 grid grid-cols-12 gap-2 text-xs border-b border-gray-300">
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('unit')}>Unit</div>
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('lastName')}>Last Name</div>
                    <div className="col-span-1 border-r border-gray-300 pr-2 cursor-pointer" onClick={() => requestSort('firstName')}>First Name</div>
@@ -1317,7 +1317,7 @@ function App() {
                  <div className="divide-y divide-gray-200">
                    {filteredAndSortedBookings().map(booking => (
                      <div key={booking.id}>
-                       <div className="grid grid-cols-12 gap-2 items-center text-sm py-2 hover:bg-gray-50">
+                       <div className="grid grid-cols-12 gap-2 items-center text-xs py-2 hover:bg-gray-50">
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenUnitModal(units.find(u => u.id === booking.unitId))}>{units.find(u => u.id === booking.unitId)?.name}</div>
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.lastName}</div>
                          <div className="col-span-1 cursor-pointer" onClick={() => handleOpenBookingModal(booking)}>{booking.firstName}</div>
@@ -1338,7 +1338,7 @@ function App() {
                        
                        {expandedRow === booking.id && (
                          <div className="bg-gray-100 p-4 border-t border-gray-200">
-                             <div className="grid grid-cols-12 gap-2 text-sm text-blue-900">
+                             <div className="grid grid-cols-12 gap-2 text-xs text-blue-900">
                              <div className="col-start-4 col-span-2 text-left">
                                  <h4 className="font-bold">Rental Periods:</h4>
                                  {booking.lineItems.map((item, index) => (
@@ -1384,7 +1384,7 @@ function App() {
                    <div className="space-y-4">
                      <div className="flex gap-4">
                        <div className="flex-1">
-                         <label className="text-sm font-medium">Date:</label>
+                         <label className="text-xs font-medium">Date:</label>
                          <input
                            type="date"
                            className="input-field"
@@ -1393,7 +1393,7 @@ function App() {
                          />
                        </div>
                        <div className="flex-1">
-                         <label className="text-sm font-medium">Amount (฿):</label>
+                         <label className="text-xs font-medium">Amount (฿):</label>
                          <input
                            type="number"
                            className="input-field"
@@ -1403,7 +1403,7 @@ function App() {
                        </div>
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Description:</label>
+                       <label className="text-xs font-medium">Description:</label>
                        <input
                          type="text"
                          className="input-field"
@@ -1412,7 +1412,7 @@ function App() {
                        />
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Category:</label>
+                       <label className="text-xs font-medium">Category:</label>
                        <select
                          className="input-field"
                          value={newExpense.category}
@@ -1429,7 +1429,7 @@ function App() {
                        </select>
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Property:</label>
+                       <label className="text-xs font-medium">Property:</label>
                        <select
                          className="input-field"
                          value={newExpense.propertyId}
@@ -1445,7 +1445,7 @@ function App() {
                      </div>
                      {newExpense.propertyId && (
                        <div>
-                         <label className="text-sm font-medium">Unit (Optional):</label>
+                         <label className="text-xs font-medium">Unit (Optional):</label>
                          <select
                            className="input-field"
                            value={newExpense.unitId}
@@ -1719,7 +1719,7 @@ function App() {
                            
                            if (monthIncome > 0 || monthExpenses > 0) {
                              return (
-                               <div key={month} className="text-sm">
+                               <div key={month} className="text-xs">
                                  <strong>{month}:</strong><br/>
                                  Income: {monthIncome.toFixed(0)}฿<br/>
                                  Expenses: {monthExpenses.toFixed(0)}฿<br/>
@@ -1747,7 +1747,7 @@ function App() {
                            
                            if (unitIncome > 0 || unitExpenses > 0) {
                              return (
-                               <div key={unit.id} className="flex justify-between text-sm py-1 border-b">
+                               <div key={unit.id} className="flex justify-between text-xs py-1 border-b">
                                  <span className="font-medium">{unit.name}:</span>
                                  <span>Income: {unitIncome.toFixed(0)}฿ | Expenses: {unitExpenses.toFixed(0)}฿ | 
                                    <span className={unitIncome - unitExpenses >= 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>
@@ -1924,7 +1924,7 @@ function App() {
             </button>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Property</h2>
             <div className="flex flex-col space-y-4">
-              <label className="text-sm font-medium">Property Name:</label>
+              <label className="text-xs font-medium">Property Name:</label>
               <input
                 type="text"
                 className="input-field"
@@ -2042,7 +2042,7 @@ function App() {
                 reminders
                   .sort((a, b) => a.date - b.date)
                   .map((r, index) => (
-                    <div key={index} className={`flex justify-between items-center p-3 rounded-md border text-sm ${
+                    <div key={index} className={`flex justify-between items-center p-3 rounded-md border text-xs ${
                       r.type === 'checkin' ? 'bg-blue-100 border-blue-500' : 
                       r.type === 'checkout' ? 'bg-red-100 border-red-500' : 
                       r.type === 'rent' ? 'bg-green-100 border-green-500' : 
@@ -2055,7 +2055,7 @@ function App() {
                       </div>
                       <button onClick={() => {
                         setReminders(prev => prev.filter((_, i) => i !== index));
-                      }} className="text-red-500 hover:text-red-700 transition-colors text-sm">
+                      }} className="text-red-500 hover:text-red-700 transition-colors text-xs">
                         ×
                       </button>
                     </div>
@@ -2073,16 +2073,16 @@ function App() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[70]">
           <div className="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full relative">
             <h3 className="text-lg font-bold mb-3">Confirm Deletion</h3>
-            <p className="mb-4 text-sm">{confirmMessage}</p>
+            <p className="mb-4 text-xs">{confirmMessage}</p>
             <div className="flex justify-end gap-2">
               <button
-                className="bg-gray-300 text-gray-800 px-3 py-1.5 text-sm rounded-full hover:bg-gray-400"
+                className="bg-gray-300 text-gray-800 px-3 py-1.5 text-xs rounded-full hover:bg-gray-400"
                 onClick={() => setIsConfirmModalOpen(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-red-500 text-white px-3 py-1.5 text-sm rounded-full hover:bg-red-600"
+                className="bg-red-500 text-white px-3 py-1.5 text-xs rounded-full hover:bg-red-600"
                 onClick={() => confirmAction()}
               >
                 Delete
@@ -2095,7 +2095,7 @@ function App() {
       {/* Booking Modal */}
       {isModalOpen && modalData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-1 z-50">
-          <div className="bg-white p-3 md:p-4 rounded-lg shadow-2xl max-w-4xl w-full max-h-[98vh] overflow-y-auto relative text-sm">
+          <div className="bg-white p-3 md:p-4 rounded-lg shadow-2xl max-w-4xl w-full max-h-[98vh] overflow-y-auto relative text-xs">
             <button
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
               onClick={handleCloseModal}
@@ -2108,9 +2108,9 @@ function App() {
             
             {/* Unit Selection for Moving Bookings */}
             <div className="mt-2 p-2 bg-gray-50 rounded">
-              <label className="text-sm font-medium">Unit:</label>
+              <label className="text-xs font-medium">Unit:</label>
               <select
-                className="input-field text-sm mt-1 h-8"
+                className="input-field text-xs mt-1 h-8"
                 value={modalData.unitId}
                 onChange={(e) => setModalData(prev => ({ ...prev, unitId: e.target.value }))}
               >
@@ -2128,7 +2128,7 @@ function App() {
               {/* Guest & Contact Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">First Name:</label>
+                  <label className="text-xs font-medium">First Name:</label>
                   <input type="text" className="input-field w-20ch" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => {
@@ -2145,13 +2145,13 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Last Name:</label>
+                  <label className="text-xs font-medium">Last Name:</label>
                   <input type="text" className="input-field w-20ch" name="lastName" value={modalData.lastName ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => ({ ...prev, [name]: value }));
                   }} />
                 </div>
-                <div className="flex items-center gap-1 text-sm pt-2">
+                <div className="flex items-center gap-1 text-xs pt-2">
                     <label className="flex items-center gap-1">
                       <input type="radio" name="status" value="checkedIn" checked={modalData.status === "checkedIn"} onChange={(e) => {
                         setModalData(prev => ({ ...prev, status: e.target.value }));
@@ -2177,32 +2177,32 @@ function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Phone" checked={modalData.preferredContact === "Phone"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Phone:</span>
+                  <span className="text-xs font-medium">Phone:</span>
                   <input type="text" className="input-field w-20ch" name="phone" value={modalData.phone ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, phone: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Email" checked={modalData.preferredContact === "Email"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Email:</span>
+                  <span className="text-xs font-medium">Email:</span>
                   <input type="text" className="input-field w-20ch" name="email" value={modalData.email ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, email: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Whatsapp" checked={modalData.preferredContact === "Whatsapp"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">WhatsApp:</span>
+                  <span className="text-xs font-medium">WhatsApp:</span>
                   <input type="text" className="input-field w-20ch" name="whatsapp" value={modalData.whatsapp ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, whatsapp: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Line" checked={modalData.preferredContact === "Line"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">LINE:</span>
+                  <span className="text-xs font-medium">LINE:</span>
                   <input type="text" className="input-field w-20ch" name="line" value={modalData.line ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, line: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Instagram" checked={modalData.preferredContact === "Instagram"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Instagram:</span>
+                  <span className="text-xs font-medium">Instagram:</span>
                   <input type="text" className="input-field w-20ch" name="instagram" value={modalData.instagram ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, instagram: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Facebook" checked={modalData.preferredContact === "Facebook"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Facebook:</span>
+                  <span className="text-xs font-medium">Facebook:</span>
                   <input type="text" className="input-field w-20ch" name="facebook" value={modalData.facebook ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, facebook: e.target.value }))} />
                 </label>
               </div>
@@ -2210,7 +2210,7 @@ function App() {
               {/* Booking Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Check-in:</label>
+                  <label className="text-xs font-medium">Check-in:</label>
                   <input type="date" className="input-field w-20ch" name="checkIn" value={modalData.checkIn ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => {
@@ -2225,10 +2225,10 @@ function App() {
                       return updatedData;
                     });
                   }} />
-                  <span className="text-sm text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
+                  <span className="text-xs text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Checkout:</label>
+                  <label className="text-xs font-medium">Checkout:</label>
                   <input type="date" className="input-field w-20ch" name="checkout" value={modalData.checkout ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => {
@@ -2245,11 +2245,11 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Deposit (฿):</label>
+                  <label className="text-xs font-medium">Deposit (฿):</label>
                   <div className="flex flex-col gap-2">
                     <input type="number" className="input-field w-20ch" name="deposit" value={modalData.deposit ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, deposit: Number(e.target.value) }))} />
                     <div className="flex flex-col gap-1">
-                      <label className="flex items-center gap-1 text-sm">
+                      <label className="flex items-center gap-1 text-xs">
                         <input 
                           type="checkbox" 
                           checked={modalData.depositCollected || false}
@@ -2257,7 +2257,7 @@ function App() {
                         />
                         Collected
                       </label>
-                      <label className="flex items-center gap-1 text-sm">
+                      <label className="flex items-center gap-1 text-xs">
                         <input 
                           type="checkbox" 
                           checked={modalData.depositRefunded || false}
@@ -2273,7 +2273,7 @@ function App() {
               {/* Rates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Monthly Rate (฿):</label>
+                  <label className="text-xs font-medium">Monthly Rate (฿):</label>
                   <input type="number" className="input-field w-20ch" name="monthlyRate" value={modalData.monthlyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2286,7 +2286,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <label className="text-xs font-medium">Weekly Rate:</label>
                   <input type="number" className="input-field w-20ch" name="weeklyRate" value={modalData.weeklyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2299,7 +2299,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <label className="text-xs font-medium">Daily Rate:</label>
                   <input type="number" className="input-field w-20ch" name="dailyRate" value={modalData.dailyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2316,7 +2316,7 @@ function App() {
               {/* Source and Pricing Info */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Source:</label>
+                  <label className="text-xs font-medium">Source:</label>
                   <select
                     className="input-field"
                     name="source"
@@ -2331,15 +2331,15 @@ function App() {
                   </select>
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Total Price:</label>
+                  <label className="text-xs font-medium">Total Price:</label>
                   <input type="number" className="input-field" name="totalPrice" value={modalData.totalPrice ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, totalPrice: Number(e.target.value) }))} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Commission:</label>
+                  <label className="text-xs font-medium">Commission:</label>
                   <input type="number" className="input-field" name="commission" value={modalData.commission ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, commission: Number(e.target.value) }))} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Net Price:</label>
+                  <label className="text-xs font-medium">Net Price:</label>
                   <div className="input-field bg-gray-200 cursor-not-allowed">
                     {((modalData.totalPrice || 0) - (modalData.commission || 0)).toFixed(2)}฿
                   </div>
@@ -2351,7 +2351,7 @@ function App() {
                 {/* Payments */}
                 <div className="bg-white p-4 rounded-lg shadow-inner">
                   <h3 className="font-bold mb-2">Payments</h3>
-                  <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
+                  <ul className="text-xs space-y-2 mb-2 max-h-40 overflow-y-auto">
                     {modalData.payments?.sort((a, b) => new Date(a.date) - new Date(b.date)).map((p, idx) => (
                       <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
                         <input
@@ -2362,10 +2362,10 @@ function App() {
                             newPayments[idx] = { ...newPayments[idx], date: e.target.value };
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="w-24 text-sm border rounded-md"
+                          className="w-24 text-xs border rounded-md"
                         />
                         <select
-                          className="w-20 text-sm border rounded-md"
+                          className="w-20 text-xs border rounded-md"
                           value={p.category ?? 'Rent'}
                           onChange={(e) => {
                             const newPayments = [...modalData.payments];
@@ -2386,14 +2386,14 @@ function App() {
                             newPayments[idx] = { ...newPayments[idx], amount: Number(e.target.value) };
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="w-16 text-sm text-right border rounded-md"
+                          className="w-16 text-xs text-right border rounded-md"
                         />฿
                         <button
                           onClick={() => {
                             const newPayments = modalData.payments.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, payments: newPayments }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-sm"
+                          className="text-red-500 hover:text-red-700 ml-1 text-xs"
                         >
                           ×
                         </button>
@@ -2449,7 +2449,7 @@ function App() {
                 {/* Meter Readings */}
                 <div className="bg-white p-4 rounded-lg shadow-inner">
                   <h3 className="font-bold mb-2">Meter Readings</h3>
-                  <ul className="text-sm space-y-2 mb-2 max-h-40 overflow-y-auto">
+                  <ul className="text-xs space-y-2 mb-2 max-h-40 overflow-y-auto">
                     {modalData.meterReadings?.sort((a, b) => new Date(a.date) - new Date(b.date)).map((m, idx) => (
                       <li key={idx} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
                         <input
@@ -2460,7 +2460,7 @@ function App() {
                             newReadings[idx].date = e.target.value;
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="w-24 text-sm border rounded-md"
+                          className="w-24 text-xs border rounded-md"
                         />
                         <input
                           type="number"
@@ -2470,9 +2470,9 @@ function App() {
                             newReadings[idx].reading = Number(e.target.value);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="w-16 text-sm text-right border rounded-md"
+                          className="w-16 text-xs text-right border rounded-md"
                         />
-                        <span className="text-sm font-semibold">
+                        <span className="text-xs font-semibold">
                           {idx > 0 ? ((m.reading - modalData.meterReadings.sort((a, b) => new Date(a.date) - new Date(b.date))[idx-1].reading) * (modalData.electricRate ?? meterRate)).toFixed(0) : 0}฿
                         </span>
                         <button
@@ -2480,7 +2480,7 @@ function App() {
                             const newReadings = modalData.meterReadings.filter((_, i) => i !== idx);
                             setModalData(prev => ({ ...prev, meterReadings: newReadings }));
                           }}
-                          className="text-red-500 hover:text-red-700 ml-1 text-sm"
+                          className="text-red-500 hover:text-red-700 ml-1 text-xs"
                         >
                           ×
                         </button>
@@ -2523,7 +2523,7 @@ function App() {
                       Add
                     </button>
                     <button
-                      className="bg-green-500 text-white px-2 py-1 text-sm rounded-full hover:bg-green-600 ml-2"
+                      className="bg-green-500 text-white px-2 py-1 text-xs rounded-full hover:bg-green-600 ml-2"
                       onClick={handleAutoFillMeterReading}
                     >
                       Auto Fill
@@ -2531,13 +2531,13 @@ function App() {
                   </div>
                   <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Electric (฿/kWh):</span>
+                        <span className="text-xs font-medium">Electric (฿/kWh):</span>
                         <input type="number" className="input-field w-15ch" name="electricRate" value={modalData.electricRate ?? meterRate} onChange={(e) => setModalData(prev => ({ ...prev, electricRate: Number(e.target.value) }))} />
                       </label>
                   </div>
                   <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Water (฿/Mo):</span>
+                            <span className="text-xs font-medium">Water (฿/Mo):</span>
                             <input type="number" className="input-field w-20ch" name="monthlyWaterCharge" value={modalData.monthlyWaterCharge ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, monthlyWaterCharge: Number(e.target.value) }))} />
                       </label>
                   </div>
@@ -2548,13 +2548,13 @@ function App() {
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8 p-4 border rounded-lg bg-gray-50">
                 <div>
                   <h4 className="font-bold mb-2">Total Costs</h4>
-                  <ul className="text-sm space-y-1">
+                  <ul className="text-xs space-y-1">
                     <li className="flex justify-between cursor-pointer" onClick={() => setIsRentBreakdownExpanded(!isRentBreakdownExpanded)}>
                       <span className="text-gray-600">Total Rent:</span>
                       <span className="font-semibold">{getRentCost(modalData).toFixed(0)}฿</span>
                     </li>
                     {isRentBreakdownExpanded && (
-                      <div className="mt-2 text-sm bg-gray-100 p-2 rounded">
+                      <div className="mt-2 text-xs bg-gray-100 p-2 rounded">
                         <h5 className="font-semibold mb-1">Rental Breakdown:</h5>
                         <ul className="space-y-1">
                           {modalData.totalPrice && modalData.totalPrice > 0 ? (
@@ -2610,7 +2610,7 @@ function App() {
                 </div>
                 <div>
                   <h4 className="font-bold mb-2">Current Costs</h4>
-                  <ul className="text-sm space-y-1">
+                  <ul className="text-xs space-y-1">
                     <li className="flex justify-between">
                       <span className="text-gray-600">Rent:</span>
                       <span className="font-semibold">{getDueNowRent(modalData).toFixed(0)}฿</span>
@@ -2645,13 +2645,13 @@ function App() {
               
               {/* Notes Field */}
               <div className="flex flex-col mt-4">
-                <label className="text-sm font-medium">Notes:</label>
+                <label className="text-xs font-medium">Notes:</label>
                 <textarea className="input-field h-24" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
               </div>
             </div>
             <div className="flex flex-wrap justify-end gap-2 mt-3">
               <button 
-                className="bg-red-500 text-white px-3 py-1.5 text-sm rounded-full hover:bg-red-600" 
+                className="bg-red-500 text-white px-3 py-1.5 text-xs rounded-full hover:bg-red-600" 
                 onClick={() => {
                   setConfirmMessage('Are you sure you want to delete this booking? This cannot be undone.');
                   setConfirmAction(() => async () => {
@@ -2672,8 +2672,8 @@ function App() {
               >
                 Delete Booking
               </button>
-              <button className="bg-gray-300 text-gray-800 px-3 py-1.5 text-sm rounded-full hover:bg-gray-400" onClick={handleCloseModal}>Close</button>
-              <button className="bg-blue-500 text-white px-3 py-1.5 text-sm rounded-full hover:bg-blue-600" onClick={handleSaveModal}>Save Booking</button>
+              <button className="bg-gray-300 text-gray-800 px-3 py-1.5 text-xs rounded-full hover:bg-gray-400" onClick={handleCloseModal}>Close</button>
+              <button className="bg-blue-500 text-white px-3 py-1.5 text-xs rounded-full hover:bg-blue-600" onClick={handleSaveModal}>Save Booking</button>
             </div>
           </div>
         </div>
@@ -2694,7 +2694,7 @@ function App() {
             <h2 className="text-2xl font-bold text-gray-800">Edit Unit: {editingUnit.name ?? ''}</h2>
             <div className="mt-6 space-y-4">
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Unit Name:</label>
+                <label className="text-xs font-medium">Unit Name:</label>
                 <input
                   type="text"
                   className="input-field"
@@ -2703,7 +2703,7 @@ function App() {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Property:</label>
+                <label className="text-xs font-medium">Property:</label>
                 <select
                   className="input-field"
                   value={editingUnit.propertyId}
@@ -2713,7 +2713,7 @@ function App() {
                 </select>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Description:</label>
+                <label className="text-xs font-medium">Description:</label>
                 <textarea
                   className="input-field h-24"
                   value={editingUnit.description ?? ''}
@@ -2722,7 +2722,7 @@ function App() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <label className="text-xs font-medium">Daily Rate:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2731,7 +2731,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <label className="text-xs font-medium">Weekly Rate:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2740,7 +2740,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Monthly Rate:</label>
+                  <label className="text-xs font-medium">Monthly Rate:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2774,7 +2774,7 @@ function App() {
             <div className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Property Name:</label>
+                  <label className="text-xs font-medium">Property Name:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2783,7 +2783,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Address:</label>
+                  <label className="text-xs font-medium">Address:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2794,7 +2794,7 @@ function App() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">WiFi Password:</label>
+                  <label className="text-xs font-medium">WiFi Password:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2803,7 +2803,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Electric Account #:</label>
+                  <label className="text-xs font-medium">Electric Account #:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2812,7 +2812,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Water Account #:</label>
+                  <label className="text-xs font-medium">Water Account #:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2823,7 +2823,7 @@ function App() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Internet Account #:</label>
+                  <label className="text-xs font-medium">Internet Account #:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2832,7 +2832,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Rent Amount:</label>
+                  <label className="text-xs font-medium">Rent Amount:</label>
                   <input
                     type="text"
                     className="input-field"
@@ -2842,7 +2842,7 @@ function App() {
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Rent Payment Details:</label>
+                <label className="text-xs font-medium">Rent Payment Details:</label>
                 <textarea
                   className="input-field h-16 resize-none"
                   value={editingProperty.rentPaymentDetails ?? ''}
@@ -2850,7 +2850,7 @@ function App() {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Contact Information:</label>
+                <label className="text-xs font-medium">Contact Information:</label>
                 <textarea
                   className="input-field h-16 resize-none"
                   value={editingProperty.contactInfo ?? ''}
@@ -2859,7 +2859,7 @@ function App() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Number of Units:</label>
+                  <label className="text-xs font-medium">Number of Units:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2868,7 +2868,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Description:</label>
+                  <label className="text-xs font-medium">Description:</label>
                   <textarea
                     className="input-field h-16 resize-none"
                     value={editingProperty.description ?? ''}
@@ -2878,8 +2878,8 @@ function App() {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <button className="bg-gray-300 text-gray-800 px-4 py-1.5 text-sm rounded-full hover:bg-gray-400" onClick={() => setIsPropertyEditModalOpen(false)}>Cancel</button>
-              <button className="bg-blue-500 text-white px-4 py-1.5 text-sm rounded-full hover:bg-blue-600" onClick={handleSaveProperty}>Save Changes</button>
+              <button className="bg-gray-300 text-gray-800 px-4 py-1.5 text-xs rounded-full hover:bg-gray-400" onClick={() => setIsPropertyEditModalOpen(false)}>Cancel</button>
+              <button className="bg-blue-500 text-white px-4 py-1.5 text-xs rounded-full hover:bg-blue-600" onClick={handleSaveProperty}>Save Changes</button>
             </div>
           </div>
         </div>
