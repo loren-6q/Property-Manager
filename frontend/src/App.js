@@ -716,6 +716,33 @@ function App() {
     }
   };
 
+  const getLastMeterReading = (unitId, currentBookingId) => {
+    // Find all previous bookings for this unit (excluding current booking)
+    const previousBookings = bookings
+      .filter(b => b.unitId === unitId && b.id !== currentBookingId)
+      .sort((a, b) => parseISO(b.checkout) - parseISO(a.checkout)); // Sort by checkout date, newest first
+    
+    // Find the most recent booking with meter readings
+    for (const booking of previousBookings) {
+      if (booking.meterReadings && booking.meterReadings.length > 0) {
+        const sortedReadings = booking.meterReadings.sort((a, b) => new Date(b.date) - new Date(a.date));
+        return sortedReadings[0].reading; // Return the last (most recent) reading
+      }
+    }
+    return null;
+  };
+
+  const handleAutoFillMeterReading = () => {
+    const lastReading = getLastMeterReading(modalData.unitId, modalData.id);
+    if (lastReading !== null) {
+      const input = document.getElementById("newMeterReading");
+      input.value = lastReading;
+      handleShowAlert(`Auto-filled with last reading: ${lastReading}`);
+    } else {
+      handleShowAlert('No previous meter readings found for this unit.');
+    }
+  };
+
   const handleDeleteUnit = async (unitId) => {
     setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
     setConfirmAction(() => async () => {
