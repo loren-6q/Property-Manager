@@ -2206,6 +2206,7 @@ function App() {
                       <option value="LINE">LINE</option>
                       <option value="Instagram">Instagram</option>
                       <option value="Facebook">Facebook</option>
+                      <option value="Other">Other</option>
                     </select>
                     <input 
                       type="text" 
