@@ -2122,125 +2122,164 @@ function App() {
                 })}
               </select>
             </div>
-            <div className="mt-3 flex flex-col gap-2">
-              {/* Guest & Contact Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                <div className="flex flex-col">
-                  <label className="text-xs font-medium">First Name:</label>
-                  <input type="text" className="input-field w-20ch" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
-                    const { name, value } = e.target;
-                    setModalData(prev => {
-                      const updatedData = { ...prev, [name]: value };
-                      if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
-                        const newCheckIn = updatedData.checkIn;
-                        const newCheckout = updatedData.checkout;
-                        if (newCheckIn && newCheckout) {
-                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+            <div className="mt-3 flex flex-col gap-3">
+              {/* Customer Details Section */}
+              <div className="bg-gray-50 p-3 rounded">
+                <h3 className="font-semibold text-sm mb-2">👤 Customer Details</h3>
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium">First Name:</label>
+                    <input type="text" className="input-field" name="firstName" value={modalData.firstName ?? ''} onChange={(e) => {
+                      const { name, value } = e.target;
+                      setModalData(prev => {
+                        const updatedData = { ...prev, [name]: value };
+                        if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
+                          const newCheckIn = updatedData.checkIn;
+                          const newCheckout = updatedData.checkout;
+                          if (newCheckIn && newCheckout) {
+                            updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                          }
                         }
-                      }
-                      return updatedData;
-                    });
-                  }} />
+                        return updatedData;
+                      });
+                    }} />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium">Last Name:</label>
+                    <input type="text" className="input-field" name="lastName" value={modalData.lastName ?? ''} onChange={(e) => {
+                      const { name, value } = e.target;
+                      setModalData(prev => {
+                        const updatedData = { ...prev, [name]: value };
+                        if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
+                          const newCheckIn = updatedData.checkIn;
+                          const newCheckout = updatedData.checkout;
+                          if (newCheckIn && newCheckout) {
+                            updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                          }
+                        }
+                        return updatedData;
+                      });
+                    }} />
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <label className="text-xs font-medium">Last Name:</label>
-                  <input type="text" className="input-field w-20ch" name="lastName" value={modalData.lastName ?? ''} onChange={(e) => {
-                    const { name, value } = e.target;
-                    setModalData(prev => ({ ...prev, [name]: value }));
-                  }} />
+                
+                {/* Contact Details */}
+                <div>
+                  <h4 className="text-xs font-medium mb-2">Contact Information:</h4>
+                  <div className="space-y-2 mb-2">
+                    {modalData.contactDetails?.map((contact, idx) => (
+                      <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded border">
+                        <span className="text-xs font-medium w-16">{contact.type}:</span>
+                        <span className="flex-1 text-xs">{contact.value}</span>
+                        <label className="flex items-center gap-1 text-xs">
+                          <input 
+                            type="radio" 
+                            name="preferredContact" 
+                            checked={modalData.preferredContact === contact.type}
+                            onChange={() => setModalData(prev => ({ ...prev, preferredContact: contact.type }))}
+                          />
+                          Preferred
+                        </label>
+                        <button
+                          onClick={() => {
+                            const newContacts = modalData.contactDetails.filter((_, i) => i !== idx);
+                            setModalData(prev => ({ ...prev, contactDetails: newContacts }));
+                          }}
+                          className="text-red-500 hover:text-red-700 text-sm"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select 
+                      className="text-xs border rounded px-2 py-1"
+                      value={newContactDetail.type}
+                      onChange={(e) => setNewContactDetail(prev => ({ ...prev, type: e.target.value }))}
+                    >
+                      <option value="Phone">Phone</option>
+                      <option value="Email">Email</option>
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="LINE">LINE</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Facebook">Facebook</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      className="flex-1 text-xs border rounded px-2 py-1"
+                      placeholder="Contact details"
+                      value={newContactDetail.value}
+                      onChange={(e) => setNewContactDetail(prev => ({ ...prev, value: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && newContactDetail.value.trim()) {
+                          const newContacts = [...(modalData.contactDetails || []), newContactDetail];
+                          setModalData(prev => ({ ...prev, contactDetails: newContacts }));
+                          setNewContactDetail({ type: 'Phone', value: '' });
+                        }
+                      }}
+                    />
+                    <button
+                      className="bg-blue-500 text-white px-3 py-1 text-xs rounded hover:bg-blue-600"
+                      onClick={() => {
+                        if (newContactDetail.value.trim()) {
+                          const newContacts = [...(modalData.contactDetails || []), newContactDetail];
+                          setModalData(prev => ({ ...prev, contactDetails: newContacts }));
+                          setNewContactDetail({ type: 'Phone', value: '' });
+                        }
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 text-xs pt-2">
-                    <label className="flex items-center gap-1">
-                      <input type="radio" name="status" value="checkedIn" checked={modalData.status === "checkedIn"} onChange={(e) => {
-                        setModalData(prev => ({ ...prev, status: e.target.value }));
-                      }} />
-                      <span style={{fontSize: '0.65rem'}}>Checked In</span>
-                    </label>
-                    <label className="flex items-center gap-1">
-                      <input type="radio" name="status" value="checkedOut" checked={modalData.status === "checkedOut"} onChange={(e) => {
-                        setModalData(prev => ({ ...prev, status: e.target.value }));
-                      }} />
-                      <span style={{fontSize: '0.65rem'}}>Checkout</span>
-                    </label>
-                    <label className="flex items-center gap-1">
-                      <input type="radio" name="status" value="future" checked={modalData.status === "future"} onChange={(e) => {
-                        setModalData(prev => ({ ...prev, status: e.target.value }));
-                      }} />
-                      <span style={{fontSize: '0.65rem'}}>None</span>
-                    </label>
+
+                {/* Notes */}
+                <div className="mt-3">
+                  <label className="text-xs font-medium">Notes:</label>
+                  <textarea className="input-field h-16 resize-none" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
                 </div>
               </div>
-              
-              {/* Contact Information */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Phone" checked={modalData.preferredContact === "Phone"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">Phone:</span>
-                  <input type="text" className="input-field w-20ch" name="phone" value={modalData.phone ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, phone: e.target.value }))} />
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Email" checked={modalData.preferredContact === "Email"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">Email:</span>
-                  <input type="text" className="input-field w-20ch" name="email" value={modalData.email ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, email: e.target.value }))} />
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Whatsapp" checked={modalData.preferredContact === "Whatsapp"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">WhatsApp:</span>
-                  <input type="text" className="input-field w-20ch" name="whatsapp" value={modalData.whatsapp ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, whatsapp: e.target.value }))} />
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Line" checked={modalData.preferredContact === "Line"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">LINE:</span>
-                  <input type="text" className="input-field w-20ch" name="line" value={modalData.line ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, line: e.target.value }))} />
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Instagram" checked={modalData.preferredContact === "Instagram"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">Instagram:</span>
-                  <input type="text" className="input-field w-20ch" name="instagram" value={modalData.instagram ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, instagram: e.target.value }))} />
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="preferredContact" value="Facebook" checked={modalData.preferredContact === "Facebook"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-xs font-medium">Facebook:</span>
-                  <input type="text" className="input-field w-20ch" name="facebook" value={modalData.facebook ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, facebook: e.target.value }))} />
-                </label>
-              </div>
-              
-              {/* Booking Info */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div className="flex flex-col">
-                  <label className="text-xs font-medium">Check-in:</label>
-                  <input type="date" className="input-field w-20ch" name="checkIn" value={modalData.checkIn ?? ''} onChange={(e) => {
-                    const { name, value } = e.target;
-                    setModalData(prev => {
-                      const updatedData = { ...prev, [name]: value };
-                      if (name === 'checkIn' || name === 'checkout') {
-                        const newCheckIn = updatedData.checkIn;
-                        const newCheckout = updatedData.checkout;
-                        if (newCheckIn && newCheckout) {
-                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+
+              {/* Booking Details Section */}
+              <div className="bg-white p-3 rounded border">
+                <h3 className="font-semibold text-sm mb-2">📅 Booking & Rate Details</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium">Check-in:</label>
+                    <input type="date" className="input-field" name="checkIn" value={modalData.checkIn ?? ''} onChange={(e) => {
+                      const { name, value } = e.target;
+                      setModalData(prev => {
+                        const updatedData = { ...prev, [name]: value };
+                        if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
+                          const newCheckIn = updatedData.checkIn;
+                          const newCheckout = updatedData.checkout;
+                          if (newCheckIn && newCheckout) {
+                            updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                          }
                         }
-                      }
-                      return updatedData;
-                    });
-                  }} />
-                  <span className="text-xs text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-xs font-medium">Checkout:</label>
-                  <input type="date" className="input-field w-20ch" name="checkout" value={modalData.checkout ?? ''} onChange={(e) => {
-                    const { name, value } = e.target;
-                    setModalData(prev => {
-                      const updatedData = { ...prev, [name]: value };
-                      if (name === 'checkIn' || name === 'checkout') {
-                        const newCheckIn = updatedData.checkIn;
-                        const newCheckout = updatedData.checkout;
-                        if (newCheckIn && newCheckout) {
-                          updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                        return updatedData;
+                      });
+                    }} />
+                    <span className="text-xs text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium">Checkout:</label>
+                    <input type="date" className="input-field" name="checkout" value={modalData.checkout ?? ''} onChange={(e) => {
+                      const { name, value } = e.target;
+                      setModalData(prev => {
+                        const updatedData = { ...prev, [name]: value };
+                        if (name === 'checkIn' || name === 'checkout' || name === 'dailyRate' || name === 'weeklyRate' || name === 'monthlyRate') {
+                          const newCheckIn = updatedData.checkIn;
+                          const newCheckout = updatedData.checkout;
+                          if (newCheckIn && newCheckout) {
+                            updatedData.lineItems = calculateLineItems(newCheckIn, newCheckout, updatedData.dailyRate, updatedData.weeklyRate, updatedData.monthlyRate);
+                          }
                         }
-                      }
-                      return updatedData;
-                    });
-                  }} />
+                        return updatedData;
+                      });
+                    }} />
+                  </div>
                 </div>
                 <div className="flex flex-col">
                   <label className="text-xs font-medium">Deposit (฿):</label>
