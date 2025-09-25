@@ -1377,6 +1377,7 @@ function App() {
                      </div>
                    ))}
                  </div>
+                 </div>
                </div>
                
                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
