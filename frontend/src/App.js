@@ -743,6 +743,61 @@ function App() {
     }
   };
 
+  const moveProperty = async (propertyId, direction) => {
+    const propertyIndex = properties.findIndex(p => p.id === propertyId);
+    if (propertyIndex === -1) return;
+
+    const newIndex = direction === 'up' ? propertyIndex - 1 : propertyIndex + 1;
+    if (newIndex < 0 || newIndex >= properties.length) return;
+
+    // Create new array with swapped positions
+    const newProperties = [...properties];
+    [newProperties[propertyIndex], newProperties[newIndex]] = [newProperties[newIndex], newProperties[propertyIndex]];
+    
+    // Update the order field for both properties
+    newProperties[propertyIndex].order = propertyIndex;
+    newProperties[newIndex].order = newIndex;
+
+    try {
+      await axios.put(`${API}/properties/${newProperties[propertyIndex].id}`, { order: propertyIndex });
+      await axios.put(`${API}/properties/${newProperties[newIndex].id}`, { order: newIndex });
+      await fetchData();
+      handleShowAlert('Property order updated successfully!');
+    } catch (error) {
+      console.error('Error updating property order:', error);
+      handleShowAlert('Failed to update property order.');
+    }
+  };
+
+  const moveUnit = async (unitId, direction) => {
+    const unit = units.find(u => u.id === unitId);
+    if (!unit) return;
+
+    const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId);
+    const unitIndex = unitsInProperty.findIndex(u => u.id === unitId);
+    
+    const newIndex = direction === 'up' ? unitIndex - 1 : unitIndex + 1;
+    if (newIndex < 0 || newIndex >= unitsInProperty.length) return;
+
+    // Create new array with swapped positions
+    const newUnits = [...unitsInProperty];
+    [newUnits[unitIndex], newUnits[newIndex]] = [newUnits[newIndex], newUnits[unitIndex]];
+    
+    // Update the order field for both units
+    newUnits[unitIndex].order = unitIndex;
+    newUnits[newIndex].order = newIndex;
+
+    try {
+      await axios.put(`${API}/units/${newUnits[unitIndex].id}`, { order: unitIndex });
+      await axios.put(`${API}/units/${newUnits[newIndex].id}`, { order: newIndex });
+      await fetchData();
+      handleShowAlert('Unit order updated successfully!');
+    } catch (error) {
+      console.error('Error updating unit order:', error);
+      handleShowAlert('Failed to update unit order.');
+    }
+  };
+
   const handleDeleteUnit = async (unitId) => {
     setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
     setConfirmAction(() => async () => {
