@@ -925,7 +925,7 @@ function App() {
   }
 
   return (
-    <div className={`bg-gray-100 min-h-screen p-8 font-sans ${isFontSizeIncreased ? 'text-lg' : ''}`}>
+    <div className={`bg-gray-100 min-h-screen p-8 pb-20 font-sans ${isFontSizeIncreased ? 'text-lg' : ''}`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
         body { font-family: 'Roboto Condensed', sans-serif; }
