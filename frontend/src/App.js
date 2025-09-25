@@ -997,7 +997,7 @@ function App() {
                             sortedBookings.forEach((b, index) => {
                                 const checkInDate = parseISO(b.checkIn);
                                 const isCurrent = isAfter(today, subDays(checkInDate, 1)) && isBefore(today, addDays(parseISO(b.checkout), 1));
-                                const balance = getDueNow(b) - getAmountPaid(b.payments);
+                                const balance = getDueNow(b) - getRentPaid(b.payments);
                                 if (index > 0) {
                                   const prevBooking = sortedBookings[index - 1];
                                   const vacantDaysBetween = differenceInDays(checkInDate, parseISO(prevBooking.checkout));
