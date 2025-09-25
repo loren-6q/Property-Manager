@@ -66,10 +66,12 @@ const getTotalCost = (booking) => {
 
 const getAmountPaid = (payments) => payments.reduce((sum, p) => sum + p.amount, 0);
 
+const getRentPaid = (payments) => payments.filter(p => p.category !== 'Deposit').reduce((sum, p) => sum + p.amount, 0);
+
 const getAmountDue = (booking) => {
   const totalCost = getTotalCost(booking);
-  const amountPaid = getAmountPaid(booking.payments);
-  return totalCost - amountPaid;
+  const rentPaid = getRentPaid(booking.payments); // Exclude deposit payments
+  return totalCost - rentPaid;
 };
 
 const getDueNowRent = (booking) => {
