@@ -1230,7 +1230,7 @@ function App() {
                    <div className="space-y-4">
                      <div className="flex gap-4">
                        <div className="flex-1">
-                         <label className="text-sm font-medium">Date:</label>
+                         <label className="text-xs font-medium">Date:</label>
                          <input
                            type="date"
                            className="input-field"
@@ -1239,7 +1239,7 @@ function App() {
                          />
                        </div>
                        <div className="flex-1">
-                         <label className="text-sm font-medium">Amount (฿):</label>
+                         <label className="text-xs font-medium">Amount (฿):</label>
                          <input
                            type="number"
                            className="input-field"
@@ -1249,7 +1249,7 @@ function App() {
                        </div>
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Description:</label>
+                       <label className="text-xs font-medium">Description:</label>
                        <input
                          type="text"
                          className="input-field"
@@ -1258,7 +1258,7 @@ function App() {
                        />
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Category:</label>
+                       <label className="text-xs font-medium">Category:</label>
                        <select
                          className="input-field"
                          value={newExpense.category}
@@ -1275,7 +1275,7 @@ function App() {
                        </select>
                      </div>
                      <div>
-                       <label className="text-sm font-medium">Property:</label>
+                       <label className="text-xs font-medium">Property:</label>
                        <select
                          className="input-field"
                          value={newExpense.propertyId}
@@ -1291,7 +1291,7 @@ function App() {
                      </div>
                      {newExpense.propertyId && (
                        <div>
-                         <label className="text-sm font-medium">Unit (Optional):</label>
+                         <label className="text-xs font-medium">Unit (Optional):</label>
                          <select
                            className="input-field"
                            value={newExpense.unitId}
@@ -1770,7 +1770,7 @@ function App() {
             </button>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Property</h2>
             <div className="flex flex-col space-y-4">
-              <label className="text-sm font-medium">Property Name:</label>
+              <label className="text-xs font-medium">Property Name:</label>
               <input
                 type="text"
                 className="input-field"
@@ -1991,7 +1991,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Last Name:</label>
+                  <label className="text-xs font-medium">Last Name:</label>
                   <input type="text" className="input-field w-20ch" name="lastName" value={modalData.lastName ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => ({ ...prev, [name]: value }));
@@ -2023,32 +2023,32 @@ function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Phone" checked={modalData.preferredContact === "Phone"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Phone:</span>
+                  <span className="text-xs font-medium">Phone:</span>
                   <input type="text" className="input-field w-20ch" name="phone" value={modalData.phone ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, phone: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Email" checked={modalData.preferredContact === "Email"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Email:</span>
+                  <span className="text-xs font-medium">Email:</span>
                   <input type="text" className="input-field w-20ch" name="email" value={modalData.email ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, email: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Whatsapp" checked={modalData.preferredContact === "Whatsapp"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">WhatsApp:</span>
+                  <span className="text-xs font-medium">WhatsApp:</span>
                   <input type="text" className="input-field w-20ch" name="whatsapp" value={modalData.whatsapp ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, whatsapp: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Line" checked={modalData.preferredContact === "Line"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">LINE:</span>
+                  <span className="text-xs font-medium">LINE:</span>
                   <input type="text" className="input-field w-20ch" name="line" value={modalData.line ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, line: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Instagram" checked={modalData.preferredContact === "Instagram"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Instagram:</span>
+                  <span className="text-xs font-medium">Instagram:</span>
                   <input type="text" className="input-field w-20ch" name="instagram" value={modalData.instagram ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, instagram: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" name="preferredContact" value="Facebook" checked={modalData.preferredContact === "Facebook"} onChange={(e) => setModalData(prev => ({ ...prev, preferredContact: e.target.value }))} />
-                  <span className="text-sm font-medium">Facebook:</span>
+                  <span className="text-xs font-medium">Facebook:</span>
                   <input type="text" className="input-field w-20ch" name="facebook" value={modalData.facebook ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, facebook: e.target.value }))} />
                 </label>
               </div>
@@ -2056,7 +2056,7 @@ function App() {
               {/* Booking Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Check-in:</label>
+                  <label className="text-xs font-medium">Check-in:</label>
                   <input type="date" className="input-field w-20ch" name="checkIn" value={modalData.checkIn ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => {
@@ -2074,7 +2074,7 @@ function App() {
                   <span className="text-xs text-gray-500">{getDaysDuration(modalData.checkIn, modalData.checkout)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Checkout:</label>
+                  <label className="text-xs font-medium">Checkout:</label>
                   <input type="date" className="input-field w-20ch" name="checkout" value={modalData.checkout ?? ''} onChange={(e) => {
                     const { name, value } = e.target;
                     setModalData(prev => {
@@ -2091,7 +2091,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Deposit (฿):</label>
+                  <label className="text-xs font-medium">Deposit (฿):</label>
                   <div className="flex flex-col gap-2">
                     <input type="number" className="input-field w-20ch" name="deposit" value={modalData.deposit ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, deposit: Number(e.target.value) }))} />
                     <div className="flex flex-col gap-1">
@@ -2119,7 +2119,7 @@ function App() {
               {/* Rates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Monthly Rate (฿):</label>
+                  <label className="text-xs font-medium">Monthly Rate (฿):</label>
                   <input type="number" className="input-field w-20ch" name="monthlyRate" value={modalData.monthlyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2132,7 +2132,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <label className="text-xs font-medium">Weekly Rate:</label>
                   <input type="number" className="input-field w-20ch" name="weeklyRate" value={modalData.weeklyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2145,7 +2145,7 @@ function App() {
                   }} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <label className="text-xs font-medium">Daily Rate:</label>
                   <input type="number" className="input-field w-20ch" name="dailyRate" value={modalData.dailyRate ?? 0} onChange={(e) => {
                     const value = Number(e.target.value);
                     setModalData(prev => {
@@ -2162,7 +2162,7 @@ function App() {
               {/* Source and Pricing Info */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Source:</label>
+                  <label className="text-xs font-medium">Source:</label>
                   <select
                     className="input-field"
                     name="source"
@@ -2177,15 +2177,15 @@ function App() {
                   </select>
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Total Price:</label>
+                  <label className="text-xs font-medium">Total Price:</label>
                   <input type="number" className="input-field" name="totalPrice" value={modalData.totalPrice ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, totalPrice: Number(e.target.value) }))} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Commission:</label>
+                  <label className="text-xs font-medium">Commission:</label>
                   <input type="number" className="input-field" name="commission" value={modalData.commission ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, commission: Number(e.target.value) }))} />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Net Price:</label>
+                  <label className="text-xs font-medium">Net Price:</label>
                   <div className="input-field bg-gray-200 cursor-not-allowed">
                     {((modalData.totalPrice || 0) - (modalData.commission || 0)).toFixed(2)}฿
                   </div>
@@ -2371,13 +2371,13 @@ function App() {
                   </div>
                   <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Electric (฿/kWh):</span>
+                        <span className="text-xs font-medium">Electric (฿/kWh):</span>
                         <input type="number" className="input-field w-15ch" name="electricRate" value={modalData.electricRate ?? meterRate} onChange={(e) => setModalData(prev => ({ ...prev, electricRate: Number(e.target.value) }))} />
                       </label>
                   </div>
                   <div className="flex flex-col mt-4">
                       <label className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Water (฿/Mo):</span>
+                            <span className="text-xs font-medium">Water (฿/Mo):</span>
                             <input type="number" className="input-field w-20ch" name="monthlyWaterCharge" value={modalData.monthlyWaterCharge ?? 0} onChange={(e) => setModalData(prev => ({ ...prev, monthlyWaterCharge: Number(e.target.value) }))} />
                       </label>
                   </div>
@@ -2485,7 +2485,7 @@ function App() {
               
               {/* Notes Field */}
               <div className="flex flex-col mt-4">
-                <label className="text-sm font-medium">Notes:</label>
+                <label className="text-xs font-medium">Notes:</label>
                 <textarea className="input-field h-24" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
               </div>
             </div>
@@ -2534,7 +2534,7 @@ function App() {
             <h2 className="text-2xl font-bold text-gray-800">Edit Unit: {editingUnit.name ?? ''}</h2>
             <div className="mt-6 space-y-4">
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Unit Name:</label>
+                <label className="text-xs font-medium">Unit Name:</label>
                 <input
                   type="text"
                   className="input-field"
@@ -2543,7 +2543,7 @@ function App() {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Property:</label>
+                <label className="text-xs font-medium">Property:</label>
                 <select
                   className="input-field"
                   value={editingUnit.propertyId}
@@ -2553,7 +2553,7 @@ function App() {
                 </select>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium">Description:</label>
+                <label className="text-xs font-medium">Description:</label>
                 <textarea
                   className="input-field h-24"
                   value={editingUnit.description ?? ''}
@@ -2562,7 +2562,7 @@ function App() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Daily Rate:</label>
+                  <label className="text-xs font-medium">Daily Rate:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2571,7 +2571,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Weekly Rate:</label>
+                  <label className="text-xs font-medium">Weekly Rate:</label>
                   <input
                     type="number"
                     className="input-field"
@@ -2580,7 +2580,7 @@ function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm font-medium">Monthly Rate:</label>
+                  <label className="text-xs font-medium">Monthly Rate:</label>
                   <input
                     type="number"
                     className="input-field"
