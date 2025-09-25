@@ -2245,7 +2245,7 @@ function App() {
                   {/* Notes */}
                   <div>
                     <label className="text-xs font-medium">Notes:</label>
-                    <textarea className="input-field h-16 resize-none" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
+                    <textarea className="input-field h-20 resize-none" name="notes" value={modalData.notes ?? ''} onChange={(e) => setModalData(prev => ({ ...prev, notes: e.target.value }))}></textarea>
                   </div>
                 </div>
 
