@@ -2638,6 +2638,133 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Property Edit Modal */}
+      {isPropertyEditModalOpen && editingProperty && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+              onClick={() => setIsPropertyEditModalOpen(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">Edit Property: {editingProperty.name ?? ''}</h2>
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Property Name:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.name ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, name: e.target.value }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Address:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.address ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, address: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">WiFi Password:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.wifiPassword ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, wifiPassword: e.target.value }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Electric Account #:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.electricAccount ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, electricAccount: e.target.value }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Water Account #:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.waterAccount ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, waterAccount: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Internet Account #:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.internetAccount ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, internetAccount: e.target.value }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Rent Amount:</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    value={editingProperty.rentAmount ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, rentAmount: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-xs font-medium">Rent Payment Details:</label>
+                <textarea
+                  className="input-field h-16 resize-none"
+                  value={editingProperty.rentPaymentDetails ?? ''}
+                  onChange={e => setEditingProperty(prev => ({ ...prev, rentPaymentDetails: e.target.value }))}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-xs font-medium">Contact Information:</label>
+                <textarea
+                  className="input-field h-16 resize-none"
+                  value={editingProperty.contactInfo ?? ''}
+                  onChange={e => setEditingProperty(prev => ({ ...prev, contactInfo: e.target.value }))}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Number of Units:</label>
+                  <input
+                    type="number"
+                    className="input-field"
+                    value={editingProperty.unitsCount ?? 0}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, unitsCount: Number(e.target.value) }))}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs font-medium">Description:</label>
+                  <textarea
+                    className="input-field h-16 resize-none"
+                    value={editingProperty.description ?? ''}
+                    onChange={e => setEditingProperty(prev => ({ ...prev, description: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="bg-gray-300 text-gray-800 px-4 py-1.5 text-sm rounded-full hover:bg-gray-400" onClick={() => setIsPropertyEditModalOpen(false)}>Cancel</button>
+              <button className="bg-blue-500 text-white px-4 py-1.5 text-sm rounded-full hover:bg-blue-600" onClick={handleSaveProperty}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
