@@ -227,6 +227,54 @@
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Page title successfully changed to 'Property Manager' (line 21 in index.html)."
+  
+  - task: "Property Edit Modal with all fields"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Property edit modal (✏️ button) opens correctly with all 10 expected fields: Property Name, Address, WiFi Password, Electric Account #, Water Account #, Internet Account #, Rent Amount, Rent Payment Details, Contact Information, Number of Units, Description. Save Changes button functional."
+  
+  - task: "Property Reordering with up/down arrows"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Property reordering arrows (↑↓) are present and functional. Found 13 up arrows and 13 down arrows. Successfully tested clicking down arrow to reorder properties."
+  
+  - task: "Unit Reordering within properties"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Unit reordering arrows are present within property sections. Found 20 unit reordering buttons positioned in top-right of unit cards for reordering units within their respective properties."
+  
+  - task: "Auto Meter Reading button functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Auto Fill button found in booking modal meter readings section. Button is functional and populates meter reading field with last reading from previous customer for the unit."
 
 ## metadata:
   created_by: "main_agent"
