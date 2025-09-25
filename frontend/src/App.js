@@ -974,9 +974,14 @@ function App() {
                     }}>
                       <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-gray-800">{property.name}</h2>
+                        <div className="flex items-center gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-sm">
+                            ✏️
+                          </button>
                           <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-sm">
                             ×
                           </button>
+                        </div>
                       </div>
                       <span>
                         <svg
