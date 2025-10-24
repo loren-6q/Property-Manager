@@ -1105,16 +1105,18 @@ function App() {
                       <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-gray-800">{property.name}</h2>
                         <div className="flex items-center gap-1">
-                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'up'); }} className="text-gray-500 hover:text-gray-700 text-xs" disabled={properties.findIndex(p => p.id === property.id) === 0}>
-                            ↑
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'down'); }} className="text-gray-500 hover:text-gray-700 text-xs" disabled={properties.findIndex(p => p.id === property.id) === properties.length - 1}>
-                            ↓
-                          </button>
+                          <div className="flex flex-col gap-1 mr-3">
+                            <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'up'); }} className="text-gray-600 hover:text-gray-800 text-lg font-bold" disabled={properties.findIndex(p => p.id === property.id) === 0}>
+                              ▲
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); moveProperty(property.id, 'down'); }} className="text-gray-600 hover:text-gray-800 text-lg font-bold" disabled={properties.findIndex(p => p.id === property.id) === properties.length - 1}>
+                              ▼
+                            </button>
+                          </div>
                           <button onClick={(e) => { e.stopPropagation(); handleOpenPropertyEditModal(property); }} className="text-blue-500 hover:text-blue-700 font-bold text-xs ml-2">
                             ✏️
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeleteProperty(property.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg ml-1">
                             ×
                           </button>
                         </div>
