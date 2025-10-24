@@ -317,11 +317,6 @@ function App() {
         // Check if API is available
         await axios.get(`${API}/health`);
         await fetchData();
-        
-        // If no data exists, initialize sample data
-        if (properties.length === 0) {
-          await initializeSampleData();
-        }
       } catch (error) {
         console.error("Error initializing app:", error);
         handleShowAlert("Failed to connect to server. Please try again.");
