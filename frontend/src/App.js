@@ -1210,13 +1210,13 @@ function App() {
                               <div className="mt-2" style={{ fontSize: isFontSizeIncreased ? '1em' : '0.875em' }}>
                                 {bookingElements}
                               </div>
-                              <div className="absolute top-4 right-4 flex items-center space-x-1">
-                                  <div className="flex flex-col">
-                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'up'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === 0}>
-                                      ↑
+                              <div className="absolute top-4 right-4 flex items-center space-x-2">
+                                  <div className="flex flex-col gap-1 mr-3">
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'up'); }} className="text-gray-600 hover:text-gray-800 text-lg font-bold" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === 0}>
+                                      ▲
                                     </button>
-                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'down'); }} className="text-gray-400 hover:text-gray-600 text-xs" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === units.filter(u => u.propertyId === unit.propertyId).length - 1}>
-                                      ↓
+                                    <button onClick={(e) => { e.stopPropagation(); const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId); moveUnit(unit.id, 'down'); }} className="text-gray-600 hover:text-gray-800 text-lg font-bold" disabled={units.filter(u => u.propertyId === unit.propertyId).findIndex(u => u.id === unit.id) === units.filter(u => u.propertyId === unit.propertyId).length - 1}>
+                                      ▼
                                     </button>
                                   </div>
                                   <button onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }} className="text-red-500 hover:text-red-700 font-bold text-lg">
