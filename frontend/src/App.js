@@ -739,75 +739,8 @@ function App() {
     }
   };
 
-  const moveProperty = async (propertyId, direction) => {
-    const propertyIndex = properties.findIndex(p => p.id === propertyId);
-    if (propertyIndex === -1) return;
-
-    const newIndex = direction === 'up' ? propertyIndex - 1 : propertyIndex + 1;
-    if (newIndex < 0 || newIndex >= properties.length) return;
-
-    // Create new array with swapped positions
-    const newProperties = [...properties];
-    [newProperties[propertyIndex], newProperties[newIndex]] = [newProperties[newIndex], newProperties[propertyIndex]];
-    
-    // Update state immediately for UI feedback
-    setProperties(newProperties);
-    
-    try {
-      // Update both properties with new positions
-      await axios.put(`${API}/properties/${newProperties[propertyIndex].id}`, { 
-        ...newProperties[propertyIndex], 
-        displayOrder: propertyIndex 
-      });
-      await axios.put(`${API}/properties/${newProperties[newIndex].id}`, { 
-        ...newProperties[newIndex], 
-        displayOrder: newIndex 
-      });
-      handleShowAlert('Property order saved!');
-    } catch (error) {
-      console.error('Error saving property order:', error);
-      // Revert on error
-      await fetchData();
-      handleShowAlert('Failed to save property order.');
-    }
-  };
-
-  const moveUnit = async (unitId, direction) => {
-    const unit = units.find(u => u.id === unitId);
-    if (!unit) return;
-
-    const unitsInProperty = units.filter(u => u.propertyId === unit.propertyId);
-    const unitIndex = unitsInProperty.findIndex(u => u.id === unitId);
-    
-    const newIndex = direction === 'up' ? unitIndex - 1 : unitIndex + 1;
-    if (newIndex < 0 || newIndex >= unitsInProperty.length) return;
-
-    // Update local state immediately
-    const newUnits = [...units];
-    const globalIndexA = newUnits.findIndex(u => u.id === unitsInProperty[unitIndex].id);
-    const globalIndexB = newUnits.findIndex(u => u.id === unitsInProperty[newIndex].id);
-    
-    [newUnits[globalIndexA], newUnits[globalIndexB]] = [newUnits[globalIndexB], newUnits[globalIndexA]];
-    setUnits(newUnits);
-    
-    try {
-      // Update both units with new positions  
-      await axios.put(`${API}/units/${newUnits[globalIndexA].id}`, {
-        ...newUnits[globalIndexA],
-        displayOrder: unitIndex
-      });
-      await axios.put(`${API}/units/${newUnits[globalIndexB].id}`, {
-        ...newUnits[globalIndexB], 
-        displayOrder: newIndex
-      });
-      handleShowAlert('Unit order saved!');
-    } catch (error) {
-      console.error('Error saving unit order:', error);
-      // Revert on error
-      await fetchData();
-      handleShowAlert('Failed to save unit order.');
-    }
-  };
+  const moveProperty = () => {}; // Removed - using alphabetical sorting
+  const moveUnit = () => {}; // Removed - using alphabetical sorting
 
   const handleDeleteUnit = async (unitId) => {
     setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
