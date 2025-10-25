@@ -739,8 +739,27 @@ function App() {
     }
   };
 
-  const moveProperty = () => {}; // Removed - using alphabetical sorting
-  const moveUnit = () => {}; // Removed - using alphabetical sorting
+  // Sort properties and units alphabetically/numerically
+  const getSortedProperties = () => {
+    return [...properties].sort((a, b) => {
+      // Natural sort that handles numbers properly (Lily1, Lily2, Lily10 instead of Lily1, Lily10, Lily2)
+      return a.name.localeCompare(b.name, undefined, {
+        numeric: true,
+        sensitivity: 'base'
+      });
+    });
+  };
+
+  const getSortedUnitsForProperty = (propertyId) => {
+    return units
+      .filter(unit => unit.propertyId === propertyId)
+      .sort((a, b) => {
+        return a.name.localeCompare(b.name, undefined, {
+          numeric: true,
+          sensitivity: 'base'
+        });
+      });
+  };
 
   const handleDeleteUnit = async (unitId) => {
     setConfirmMessage('Are you sure you want to delete this unit and all its bookings? This cannot be undone.');
