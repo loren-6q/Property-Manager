@@ -1072,7 +1072,7 @@ function App() {
                     
                     {expandedProperties.has(property.id) && (
                       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                        {units.filter(u => u.propertyId === property.id).map(unit => {
+                        {getSortedUnitsForProperty(property.id).map((unit) => {
                           // Only show current and future bookings, plus checkouts within 2 days in Units tab
                           // If checkout was Sept 24th, it should show until Sept 26th (2 days after checkout)
                           const twoDaysAfterCheckout = (checkoutDate) => addDays(parseISO(checkoutDate), 2);
