@@ -1038,7 +1038,7 @@ function App() {
               </div>
               
               <div className="space-y-6">
-                {properties.map(property => (
+                {getSortedProperties().map(property => (
                   <div key={property.id} className="bg-white rounded-xl shadow-md p-6">
                     <div className="flex justify-between items-center cursor-pointer" onClick={() => {
                       const newExpanded = new Set(expandedProperties);
